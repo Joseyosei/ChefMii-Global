@@ -1,12 +1,11 @@
-# 🍳 ChefMii — The Autonomous AI-Powered Private Culinary Operating System
-> **Devpost Gemini XPRIZE Hackathon Submission**  
+# 🍳 ChefMii — A Private Culinary Operating System
 > *Connecting World-Class Private Chefs, Discerning Food Lovers, and Organic Local Growers through Google Gemini Intelligence.*
 
 ---
 
 ## 🌟 Executive Summary & Pitch
 
-**ChefMii** is a next-generation culinary marketplace and autonomous AI hospitality operating system. It bridges the gap between master private chefs, bespoke event dining, Uber-style gourmet food delivery, and regenerative organic farm sourcing.
+**ChefMii Global** is a next-generation culinary marketplace and autonomous AI hospitality operating system. It bridges the gap between master private chefs, bespoke event dining, Uber-style gourmet food delivery, and regenerative organic farm sourcing.
 
 Powered by **Google Gemini AI** on **Google Cloud Platform**, ChefMii acts as a 24/7 autonomous culinary concierge—analyzing diner flavor profiles, calculating dietary nutritional constraints, orchestrating 16-country international chef bookings, and providing live animated GPS map delivery tracking with 100% Escrow financial protection via Stripe.
 
