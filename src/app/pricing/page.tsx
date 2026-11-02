@@ -25,8 +25,8 @@ const CUSTOMER_PLANS = [
       { text: 'Book private chefs', included: true },
       { text: 'Order food from chefs', included: true },
       { text: 'Order from farmers', included: true },
-      { text: 'Access ChefMii Academy free courses', included: true },
-      { text: 'ChefMii Media (watch chef videos)', included: true },
+      { text: 'Access ChefMii Global Academy free courses', included: true },
+      { text: 'ChefMii Global Media (watch chef videos)', included: true },
       { text: 'Free delivery', included: false },
       { text: 'Booking cashback', included: false },
       { text: 'Priority access', included: false },
@@ -36,7 +36,7 @@ const CUSTOMER_PLANS = [
     buttonVariant: 'outline',
   },
   {
-    name: 'CHEFMII PLUS',
+    name: 'CHEFMII GLOBAL PLUS',
     badge: 'Most Popular',
     price: '£9.99',
     period: '/month',
@@ -51,7 +51,7 @@ const CUSTOMER_PLANS = [
       { text: 'Priority order acceptance', included: true },
       { text: 'Early access to new chefs', included: true },
       { text: 'Exclusive Academy masterclasses', included: true },
-      { text: 'ChefMii Plus badge on profile', included: true },
+      { text: 'ChefMii Global Plus badge on profile', included: true },
       { text: 'Priority customer support', included: true },
     ],
     savings: '💰 Pays for itself in just 4 orders. Save £2.99 per delivery × 4 = £11.96',
@@ -60,7 +60,7 @@ const CUSTOMER_PLANS = [
     smallText: 'Cancel anytime. No commitment.',
   },
   {
-    name: 'CHEFMII BUSINESS',
+    name: 'CHEFMII GLOBAL BUSINESS',
     badge: 'For Teams',
     price: '£49.99',
     period: '/month',
@@ -232,7 +232,7 @@ const INFLUENCER_PLANS = [
 ]
 
 const FAQS = [
-  { q: "How do I cancel my ChefMii Plus subscription?", a: "You can cancel anytime through your account settings. You'll continue to have access to Plus features until the end of your current billing period." },
+  { q: "How do I cancel my ChefMii Global Plus subscription?", a: "You can cancel anytime through your account settings. You'll continue to have access to Plus features until the end of your current billing period." },
   { q: "When do chefs and farmers get paid?", a: "Chefs are paid every Monday for all completed bookings and orders from the previous week. Farmers also receive weekly payouts directly to their linked bank account via Stripe." },
   { q: "What is the service fee for?", a: "The service fee helps us run the platform, provide 24/7 customer support, and maintain secure payment processing for all users." },
   { q: "Can I switch between plans?", a: "Yes, you can upgrade or downgrade your plan at any time. Changes will be applied at the start of your next billing cycle." },
@@ -349,7 +349,7 @@ export default function PricingPage() {
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-4 leading-tight">Simple, Transparent Pricing</h1>
             <p className="text-muted-foreground text-lg mb-10 max-w-xl mx-auto">
-              No hidden fees. No surprises. ChefMii only earns when you earn.
+              No hidden fees. No surprises. ChefMii Global only earns when you earn.
             </p>
 
             {/* Main Toggle */}
@@ -474,7 +474,7 @@ export default function PricingPage() {
                       </thead>
                       <tbody className="divide-y">
                         <tr className="bg-orange-50/50 dark:bg-orange-950/10 font-bold">
-                          <td className="p-4 text-[#E8520A]">ChefMii ✓</td>
+                          <td className="p-4 text-[#E8520A]">ChefMii Global ✓</td>
                           <td className="p-4">85%</td>
                           <td className="p-4">£0</td>
                           <td className="p-4">£0</td>
@@ -545,7 +545,7 @@ export default function PricingPage() {
                   <div className="bg-white dark:bg-[#1A1A1A] rounded-2xl p-8 border-2 border-green-600 shadow-xl max-w-2xl mx-auto mb-16">
                     <p className="text-5xl font-black text-green-600 mb-2">You keep 90%</p>
                     <p className="text-xl font-bold mb-4">of every sale.</p>
-                    <p className="text-sm text-muted-foreground">Supermarkets pay you 40-60% of retail. ChefMii pays you 90%.</p>
+                    <p className="text-sm text-muted-foreground">Supermarkets pay you 40-60% of retail. ChefMii Global pays you 90%.</p>
                   </div>
 
                   <div className="overflow-x-auto rounded-xl border border-border">
@@ -559,7 +559,7 @@ export default function PricingPage() {
                       </thead>
                       <tbody className="divide-y">
                         <tr className="bg-green-50/50 dark:bg-green-950/10 font-bold">
-                          <td className="p-4 text-green-600">ChefMii ✓</td>
+                          <td className="p-4 text-green-600">ChefMii Global ✓</td>
                           <td className="p-4">90%</td>
                           <td className="p-4">You</td>
                         </tr>
@@ -591,7 +591,7 @@ export default function PricingPage() {
                       <span className="font-bold">90% of subtotal</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-muted-foreground">ChefMii fee</span>
+                      <span className="text-muted-foreground">ChefMii Global fee</span>
                       <span className="font-bold">10%</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
@@ -628,7 +628,7 @@ export default function PricingPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
                     {[
                       { step: '1', text: 'Get your unique referral link' },
-                      { step: '2', text: 'Share ChefMii chefs in your content' },
+                      { step: '2', text: 'Share ChefMii Global chefs in your content' },
                       { step: '3', text: 'Earn commission when followers book' },
                     ].map((s, i) => (
                       <div key={i} className="bg-card border border-border rounded-xl p-6">

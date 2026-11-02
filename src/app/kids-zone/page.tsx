@@ -147,7 +147,7 @@ export default function KidsZonePage() {
                         <div className="space-y-3 text-center md:text-left">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/25 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-wider">
                                 <Sparkles className="w-3.5 h-3.5" />
-                                ChefMii Junior Academy
+                                ChefMii Global Junior Academy
                             </span>
                             <h1 className="text-3xl sm:text-5xl font-serif font-black tracking-tight leading-tight">
                                 Little Chefs, Big Flavours! 🍕✨

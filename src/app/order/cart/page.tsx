@@ -198,10 +198,10 @@ function CartContent() {
             </div>
           </div>
 
-          {/* ChefMii Premium Banner */}
+          {/* ChefMii Global Premium Banner */}
           <div className="bg-gradient-to-r from-terracotta/20 to-terracotta/10 border border-terracotta/30 rounded-2xl p-4 mb-8">
             <p className="font-bold text-sm">
-              Get £0 delivery fee with <span className="text-terracotta">ChefMii Premium</span>
+              Get £0 delivery fee with <span className="text-terracotta">ChefMii Global Premium</span>
             </p>
             <p className="text-xs text-muted-foreground mt-1">Join now and save on every order</p>
           </div>

@@ -3,10 +3,10 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export const dynamic = 'force-dynamic'
 
-const SYSTEM_PROMPT = `You are ChefMii Concierge, an ultra-premium AI culinary advisor for ChefMii — the world-class private chef and gastronomy platform.
+const SYSTEM_PROMPT = `You are ChefMii Global Concierge, an ultra-premium AI culinary advisor for ChefMii Global — the world-class private chef and gastronomy platform.
 
-ABOUT CHEFMII:
-ChefMii connects discerning clients with verified, Michelin-trained, and master private chefs worldwide for intimate dinners, romantic dates, weddings, family celebrations, and corporate events.
+ABOUT CHEFMII GLOBAL:
+ChefMii Global connects discerning clients with verified, Michelin-trained, and master private chefs worldwide for intimate dinners, romantic dates, weddings, family celebrations, and corporate events.
 
 OUR VERIFIED INTERNATIONAL CHEFS ROSTER:
 1. Chef Marco Rossi — Italian Fine Dining & Handmade Pasta | London, UK | £150/hr | /book/marco-rossi
@@ -53,7 +53,7 @@ function generateSmartFallback(query: string): string {
         return "For classic French Haute Cuisine, **Chef Pierre Dubois** (£180/hr, former Hôtel de Crillon executive chef) creates Parisian wine pairing dinners and fine pastry at [/book/pierre-dubois](/book/pierre-dubois). You can also explore **Chef Éléna Beauchamp** for French-Canadian fusion at [/book/elena-beauchamp](/book/elena-beauchamp)."
     }
     if (q.includes('escrow') || q.includes('payment') || q.includes('deposit') || q.includes('protect') || q.includes('price') || q.includes('pricing') || q.includes('cost')) {
-        return "ChefMii operates with **100% Escrow Protection** via Stripe Connect. Your funds are held securely until the chef completes your event. For bookings >5 weeks out, you can reserve with just a **20% advance deposit**, with full kitchen cleanup included in all chef rates (£70 - £220/hr)."
+        return "ChefMii Global operates with **100% Escrow Protection** via Stripe Connect. Your funds are held securely until the chef completes your event. For bookings >5 weeks out, you can reserve with just a **20% advance deposit**, with full kitchen cleanup included in all chef rates (£70 - £220/hr)."
     }
     if (q.includes('waitlist') || q.includes('vip') || q.includes('early') || q.includes('register') || q.includes('launch')) {
         return "You can join our **VIP Early Access Waitlist** at [/waitlist](/waitlist). Members receive priority access to top-rated Michelin chefs, 0% platform service fees on their inaugural booking, and bespoke event consultation."
@@ -80,7 +80,7 @@ function generateSmartFallback(query: string): string {
         return "For modern Eastern European heritage cuisine, **Chef Olena Kovalenko** (£110/hr, Kyiv) presents artisanal tasting menus with delicate fermentation and seasonal game at [/book/olena-kovalenko](/book/olena-kovalenko)."
     }
 
-    return "Welcome to **ChefMii Concierge**! We connect you with 16+ verified private chefs worldwide across Italian, Japanese, French, Nordic, Korean, African, and Middle Eastern cuisines. Browse our chefs at [/find-chefs](/find-chefs) or join the [VIP Waitlist](/waitlist) for priority booking."
+    return "Welcome to **ChefMii Global Concierge**! We connect you with 16+ verified private chefs worldwide across Italian, Japanese, French, Nordic, Korean, African, and Middle Eastern cuisines. Browse our chefs at [/find-chefs](/find-chefs) or join the [VIP Waitlist](/waitlist) for priority booking."
 }
 
 export async function POST(request: NextRequest) {

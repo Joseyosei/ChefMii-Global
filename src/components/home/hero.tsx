@@ -48,7 +48,7 @@ export function Hero() {
                 </h1>
 
                 <p className="text-base sm:text-xl text-white/80 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-2">
-                    From home dinners to presidential banquets, ChefMii connects you with top chefs globally.
+                    From home dinners to presidential banquets, ChefMii Global connects you with top chefs globally.
                 </p>
 
                 {/* CTA Tabs */}

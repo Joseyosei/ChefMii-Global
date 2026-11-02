@@ -18,7 +18,7 @@ const ROLES: { id: WaitlistRole; label: string; icon: React.ElementType; color: 
     { id: 'chef', label: 'Chefs', icon: ChefHat, color: 'from-orange-500 to-amber-600', desc: 'Join as a private chef to host events & earn' },
     { id: 'business', label: 'Businesses', icon: Building2, color: 'from-blue-500 to-indigo-600', desc: 'Book corporate meals & employee dining plans' },
     { id: 'kid', label: 'Kids & Parents', icon: Baby, color: 'from-pink-500 to-rose-600', desc: 'Gamified cooking challenges & junior classes' },
-    { id: 'tutor', label: 'Tutors', icon: GraduationCap, color: 'from-purple-500 to-violet-600', desc: 'Teach courses & masterclasses on ChefMii Academy' },
+    { id: 'tutor', label: 'Tutors', icon: GraduationCap, color: 'from-purple-500 to-violet-600', desc: 'Teach courses & masterclasses on ChefMii Global Academy' },
     { id: 'client', label: 'Clients', icon: Utensils, color: 'from-emerald-500 to-teal-600', desc: 'Book top chefs for home dinners & events' },
 ]
 
@@ -43,7 +43,7 @@ const ROLE_BENEFITS: Record<WaitlistRole, { title: string; desc: string; icon: R
     },
     tutor: {
         title: 'For Academy Tutors',
-        desc: 'Monetize your culinary expertise by building live cohort courses and on-demand video masterclasses on ChefMii Academy.',
+        desc: 'Monetize your culinary expertise by building live cohort courses and on-demand video masterclasses on ChefMii Global Academy.',
         icon: GraduationCap,
         perks: ['75% revenue share on course sales', 'Production support for lessons', 'Custom student progress tracking', 'Featured tutor spot on homepage']
     },
@@ -51,7 +51,7 @@ const ROLE_BENEFITS: Record<WaitlistRole, { title: string; desc: string; icon: R
         title: 'For Food Lovers & Clients',
         desc: 'Hire top-rated local and international chefs for intimate home dinners, date nights, weddings, and celebrations.',
         icon: Utensils,
-        perks: ['£50 voucher toward your first booking', 'Access to exclusive Michelin-starred chefs', 'Priority customer support 24/7', 'Invite to ChefMii VIP food tasting pop-ups']
+        perks: ['£50 voucher toward your first booking', 'Access to exclusive Michelin-starred chefs', 'Priority customer support 24/7', 'Invite to ChefMii Global VIP food tasting pop-ups']
     }
 }
 
@@ -136,7 +136,7 @@ export default function DedicatedWaitlistPage() {
                     <div className="absolute inset-0 z-0">
                         <Image
                             src="/images/waitlist_bg.jpg"
-                            alt="ChefMii Luxury Kitchen"
+                            alt="ChefMii Global Luxury Kitchen"
                             fill
                             priority
                             unoptimized
@@ -391,7 +391,7 @@ export default function DedicatedWaitlistPage() {
                             Tailored Advantages by Category
                         </h2>
                         <p className="text-muted-foreground text-base sm:text-lg">
-                            We engineered ChefMii to deliver immense value across our entire culinary ecosystem.
+                            We engineered ChefMii Global to deliver immense value across our entire culinary ecosystem.
                         </p>
                     </div>
 
@@ -436,7 +436,7 @@ export default function DedicatedWaitlistPage() {
                         <div className="text-center max-w-3xl mx-auto mb-16">
                             <span className="text-xs font-bold text-terracotta uppercase tracking-widest mb-2 block">Verified Roster</span>
                             <h2 className="text-3xl sm:text-5xl font-serif font-bold text-foreground mb-4">
-                                World-Class Chefs Joining ChefMii
+                                World-Class Chefs Joining ChefMii Global
                             </h2>
                             <p className="text-muted-foreground text-base sm:text-lg">
                                 Experience Michelin-starred masters and culinary innovators upon launch.

@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
                             Our Privacy Commitment
                         </h2>
                         <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                            At ChefMii (&ldquo;ChefMii&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;), we take your personal privacy seriously. We never sell your personal data. We only collect the information necessary to match you with private chefs, guarantee safe escrow transactions, and ensure dietary safety.
+                            At ChefMii Global (&ldquo;ChefMii Global&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;), we take your personal privacy seriously. We never sell your personal data. We only collect the information necessary to match you with private chefs, guarantee safe escrow transactions, and ensure dietary safety.
                         </p>
                     </div>
 
@@ -43,12 +43,12 @@ export default function PrivacyPolicyPage() {
                         {/* Section 1 */}
                         <section className="space-y-3">
                             <h2 className="text-xl font-serif font-bold text-foreground">1. Information We Collect</h2>
-                            <p>We collect information you provide directly to us when using the ChefMii platform:</p>
+                            <p>We collect information you provide directly to us when using the ChefMii Global platform:</p>
                             <ul className="list-disc pl-5 space-y-2">
                                 <li><strong>Account & Profile:</strong> Full name, email address, phone number, and profile photo.</li>
                                 <li><strong>Dining & Dietary Profile:</strong> Food allergies, dietary restrictions, preferred cuisine styles, and kitchen appliance specifications.</li>
                                 <li><strong>Location & Address:</strong> Physical dining address and delivery coordinates required for chef arrival and food delivery.</li>
-                                <li><strong>Payment Information:</strong> Financial transactions are processed securely via Stripe. ChefMii does not store raw credit card numbers or bank CVVs; payments are tokenized under PCI-DSS Level 1 compliance.</li>
+                                <li><strong>Payment Information:</strong> Financial transactions are processed securely via Stripe. ChefMii Global does not store raw credit card numbers or bank CVVs; payments are tokenized under PCI-DSS Level 1 compliance.</li>
                                 <li><strong>Chef Verification Data:</strong> For registered chefs, we collect food hygiene certificates, identity documents (passport/driver&apos;s license), and DBS background checks.</li>
                             </ul>
                         </section>
@@ -81,7 +81,7 @@ export default function PrivacyPolicyPage() {
                         <section className="space-y-3">
                             <h2 className="text-xl font-serif font-bold text-foreground">4. Data Security & Storage</h2>
                             <p>
-                                ChefMii employs industry-standard 256-bit AES encryption at rest and TLS 1.3 encryption in transit. Our servers and databases are hosted in ISO 27001-certified enterprise data centers.
+                                ChefMii Global employs industry-standard 256-bit AES encryption at rest and TLS 1.3 encryption in transit. Our servers and databases are hosted in ISO 27001-certified enterprise data centers.
                             </p>
                         </section>
 
@@ -92,7 +92,7 @@ export default function PrivacyPolicyPage() {
                             <ul className="list-disc pl-5 space-y-2">
                                 <li><strong>Right to Access:</strong> Request a copy of all personal data we hold about you.</li>
                                 <li><strong>Right to Rectification:</strong> Update or correct inaccurate personal details.</li>
-                                <li><strong>Right to Erasure (&ldquo;Right to be Forgotten&rdquo;):</strong> Request the permanent deletion of your ChefMii account and associated records.</li>
+                                <li><strong>Right to Erasure (&ldquo;Right to be Forgotten&rdquo;):</strong> Request the permanent deletion of your ChefMii Global account and associated records.</li>
                                 <li><strong>Right to Data Portability:</strong> Export your order history, reviews, and profile data in machine-readable JSON format.</li>
                             </ul>
                         </section>

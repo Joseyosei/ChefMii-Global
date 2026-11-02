@@ -11,7 +11,7 @@ import {
 const PRESS_RELEASES = [
     {
         id: 'pr-1',
-        title: 'ChefMii Launches Groundbreaking Stripe Escrow Private Chef Platform Across UK & Global Metros',
+        title: 'ChefMii Global Launches Groundbreaking Stripe Escrow Private Chef Platform Across UK & Global Metros',
         date: 'August 10, 2026',
         outlet: 'Global Gastronomy Wire',
         summary: 'Pioneering 100% financial escrow protection, 7-stage master chef vetting, and real-time live GPS driver tracking for bespoke dining.',
@@ -19,7 +19,7 @@ const PRESS_RELEASES = [
     },
     {
         id: 'pr-2',
-        title: 'ChefMii Unveils ChefTV: Real-Time Culinary Video Streaming & Instant Table-Side Chef Booking',
+        title: 'ChefMii Global Unveils ChefTV: Real-Time Culinary Video Streaming & Instant Table-Side Chef Booking',
         date: 'July 24, 2026',
         outlet: 'Tech In Food',
         summary: 'Foodies can now watch master chefs demonstrate authentic technique and reserve the chef directly from the video reel.',
@@ -27,7 +27,7 @@ const PRESS_RELEASES = [
     },
     {
         id: 'pr-3',
-        title: 'Corporate Executive Catering Surges 300% on ChefMii Business Tier for Fortune 500 Summits',
+        title: 'Corporate Executive Catering Surges 300% on ChefMii Global Business Tier for Fortune 500 Summits',
         date: 'June 15, 2026',
         outlet: 'Business Hospitality Daily',
         summary: 'Enterprises replace traditional banquet catering with multi-chef bespoke culinary stations and BACS VAT invoicing.',
@@ -36,9 +36,9 @@ const PRESS_RELEASES = [
 ]
 
 const MEDIA_COVERAGE = [
-    { quote: "ChefMii is doing for private dining what Airbnb did for luxury villas — creating an uncompromised gold standard.", publication: "Financial Times" },
-    { quote: "The Michelin-trained talent on ChefMii is astounding. Pure culinary theater in your own living room.", publication: "Forbes Luxury" },
-    { quote: "Stripe Escrow protection plus 1-click video booking makes ChefMii the standout culinary platform of 2026.", publication: "TechCrunch" },
+    { quote: "ChefMii Global is doing for private dining what Airbnb did for luxury villas — creating an uncompromised gold standard.", publication: "Financial Times" },
+    { quote: "The Michelin-trained talent on ChefMii Global is astounding. Pure culinary theater in your own living room.", publication: "Forbes Luxury" },
+    { quote: "Stripe Escrow protection plus 1-click video booking makes ChefMii Global the standout culinary platform of 2026.", publication: "TechCrunch" },
 ]
 
 const BRAND_ASSETS = [
@@ -59,7 +59,7 @@ export default function PressPage() {
                         Press & Media Hub
                     </div>
                     <h1 className="text-4xl sm:text-6xl font-serif font-bold text-foreground mb-6 leading-tight">
-                        ChefMii in the News.
+                        ChefMii Global in the News.
                     </h1>
                     <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
                         Read official company announcements, download brand media kits, and access high-resolution assets for editorial coverage.

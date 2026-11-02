@@ -12,7 +12,7 @@ import {
 
 const FAQ_ITEMS = [
     {
-        q: 'How does ChefMii Escrow Protection work for clients?',
+        q: 'How does ChefMii Global Escrow Protection work for clients?',
         a: 'When you book a chef, 100% of your payment is safely held in Stripe Escrow. Funds are only transferred to the chef 24 hours after your dining experience is complete and you are delighted.',
     },
     {

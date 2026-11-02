@@ -149,7 +149,7 @@ function CheckoutContent() {
                   className="w-4 h-4"
                 />
                 <div className="flex-1">
-                  <p className="font-medium">💰 ChefMii Wallet</p>
+                  <p className="font-medium">💰 ChefMii Global Wallet</p>
                   <p className="text-xs text-muted-foreground">Balance: £45.00</p>
                 </div>
               </label>

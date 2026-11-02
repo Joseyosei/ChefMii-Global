@@ -48,7 +48,7 @@ const CHEF_DATABASE: Record<string, { name: string; cuisine: string; rate: numbe
 
 const QUICK_PROMPTS = [
     { label: '👨‍🍳 Recommend a Chef', prompt: 'Can you recommend a private chef for an upcoming dinner party?' },
-    { label: '🛡️ Escrow & Deposits', prompt: 'How does ChefMii payment protection and 20% advance deposit work?' },
+    { label: '🛡️ Escrow & Deposits', prompt: 'How does ChefMii Global payment protection and 20% advance deposit work?' },
     { label: '⭐ Join VIP Waitlist', prompt: 'How do I join the VIP early access waitlist and get priority booking?' },
     { label: '🍝 Italian & French', prompt: 'Who are your top Italian and French private chefs?' },
     { label: '🍣 Japanese Omakase', prompt: 'Tell me about Chef Yuki Tanaka and Chef Kenji Sato.' },
@@ -64,7 +64,7 @@ export function ChatbotWidget() {
             id: 'init-1',
             role: 'assistant',
             content:
-                "Welcome to **ChefMii Concierge** 👨‍🍳\n\nI can curate bespoke private dining experiences, recommend verified chefs across 16+ countries, explain our 100% Escrow payment protection, or reserve your spot on our **VIP Early Access Waitlist**.\n\nHow may I assist your culinary plans today?",
+                "Welcome to **ChefMii Global Concierge** 👨‍🍳\n\nI can curate bespoke private dining experiences, recommend verified chefs across 16+ countries, explain our 100% Escrow payment protection, or reserve your spot on our **VIP Early Access Waitlist**.\n\nHow may I assist your culinary plans today?",
             timestamp: new Date(),
         },
     ])
@@ -254,7 +254,7 @@ export function ChatbotWidget() {
             <button
                 onClick={() => setOpen(!open)}
                 className="fixed bottom-6 right-6 z-50 group flex items-center gap-2 p-3.5 sm:p-4 gradient-brand text-white rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 border-2 border-white/20"
-                aria-label="Open ChefMii AI Concierge"
+                aria-label="Open ChefMii Global AI Concierge"
             >
                 {open ? (
                     <X className="w-6 h-6" />
@@ -264,7 +264,7 @@ export function ChatbotWidget() {
                             <ChefHat className="w-6 h-6" />
                             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white animate-pulse" />
                         </div>
-                        <span className="hidden md:inline font-semibold text-xs pr-1">Ask ChefMii</span>
+                        <span className="hidden md:inline font-semibold text-xs pr-1">Ask ChefMii Global</span>
                     </>
                 )}
             </button>
@@ -287,7 +287,7 @@ export function ChatbotWidget() {
                             </div>
                             <div>
                                 <div className="flex items-center gap-1.5">
-                                    <p className="text-white font-serif font-bold text-sm">ChefMii Concierge</p>
+                                    <p className="text-white font-serif font-bold text-sm">ChefMii Global Concierge</p>
                                     <span className="px-1.5 py-0.5 bg-white/20 text-white rounded text-[10px] font-medium tracking-wide">
                                         AI BOT
                                     </span>

@@ -102,7 +102,7 @@ export default function ReviewsPage() {
         setModalOpen(false)
         setComment('')
         setDishHighlight('')
-        showToast('⭐ Thank you for your review!', 'success', 'Your verified feedback is now live on ChefMii.')
+        showToast('⭐ Thank you for your review!', 'success', 'Your verified feedback is now live on ChefMii Global.')
     }
 
     const filteredReviews = reviews.filter(r => {

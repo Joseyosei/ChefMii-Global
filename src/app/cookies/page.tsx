@@ -9,14 +9,14 @@ import { Cookie, ShieldCheck, Settings, CheckCircle, Info, RefreshCw } from 'luc
 const COOKIE_TABLE = [
     {
         name: 'chefmii_session_user',
-        provider: 'ChefMii Platform',
+        provider: 'ChefMii Global Platform',
         category: 'Strictly Essential',
         purpose: 'Authenticates client and chef active user sessions and role permissions.',
         expiry: 'Session / 30 Days',
     },
     {
         name: 'chefmii_cookie_consent',
-        provider: 'ChefMii Platform',
+        provider: 'ChefMii Global Platform',
         category: 'Strictly Essential',
         purpose: 'Stores your granular GDPR cookie consent choices and preferences.',
         expiry: '12 Months',
@@ -30,14 +30,14 @@ const COOKIE_TABLE = [
     },
     {
         name: '_chefmii_analytics',
-        provider: 'ChefMii Telemetry',
+        provider: 'ChefMii Global Telemetry',
         category: 'Performance',
         purpose: 'Tracks route loading speed, chef search latency, and checkout flow reliability.',
         expiry: '6 Months',
     },
     {
         name: 'chefmii_dietary_pref',
-        provider: 'ChefMii Platform',
+        provider: 'ChefMii Global Platform',
         category: 'Personalization',
         purpose: 'Preserves your selected dietary allergies, halal/kosher, and cuisine filters.',
         expiry: '6 Months',
@@ -188,7 +188,7 @@ export default function CookiePolicyPage() {
                         </section>
 
                         <section className="space-y-3">
-                            <h2 className="text-xl font-serif font-bold text-foreground">2. Active Cookies on ChefMii</h2>
+                            <h2 className="text-xl font-serif font-bold text-foreground">2. Active Cookies on ChefMii Global</h2>
                             <div className="overflow-x-auto rounded-2xl border border-border bg-white dark:bg-stone-900">
                                 <table className="w-full text-left text-xs">
                                     <thead className="bg-muted/60 border-b border-border text-foreground font-bold">

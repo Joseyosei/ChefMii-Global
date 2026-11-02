@@ -51,13 +51,13 @@ export function DesignPreviews() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FF5A36]/10 text-[#FF5A36] text-sm font-bold uppercase tracking-wider mb-6">
-                        <Sparkles className="w-4 h-4" /> Explore ChefMii
+                        <Sparkles className="w-4 h-4" /> Explore ChefMii Global
                     </span>
                     <h2 className="text-3xl sm:text-5xl font-serif font-bold text-foreground mb-6">
                         Design Your Experience
                     </h2>
                     <p className="text-muted-foreground text-lg">
-                        Beyond private dining, ChefMii is a culinary ecosystem. Discover exclusive ingredients, book comprehensive event packages, or learn from the masters.
+                        Beyond private dining, ChefMii Global is a culinary ecosystem. Discover exclusive ingredients, book comprehensive event packages, or learn from the masters.
                     </p>
                 </div>
 

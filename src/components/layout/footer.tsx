@@ -109,7 +109,7 @@ export function Footer() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 text-center sm:text-left text-zinc-500 text-xs sm:text-sm">
-                        <p>© {new Date().getFullYear()} ChefMii Platform. All rights reserved.</p>
+                        <p>© {new Date().getFullYear()} ChefMii Global. All rights reserved.</p>
                         <div className="flex gap-4">
                             <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
                             <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>

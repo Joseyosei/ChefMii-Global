@@ -45,7 +45,7 @@ const VALUES = [
     },
     {
         title: 'Fair Compensation for Chefs',
-        desc: 'Traditional restaurants take massive margins. ChefMii ensures chefs keep up to 90% of their earnings with direct instant Stripe payouts.',
+        desc: 'Traditional restaurants take massive margins. ChefMii Global ensures chefs keep up to 90% of their earnings with direct instant Stripe payouts.',
     },
     {
         title: 'Hyperlocal & Sustainable',
@@ -62,13 +62,13 @@ export default function AboutPage() {
                 <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-16 sm:mb-24 text-center">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-terracotta/10 border border-terracotta/20 text-terracotta text-xs font-bold mb-6">
                         <Sparkles className="w-3.5 h-3.5" />
-                        The ChefMii Story & Mission
+                        The ChefMii Global Story & Mission
                     </div>
                     <h1 className="text-4xl sm:text-6xl font-serif font-bold text-foreground leading-[1.15] mb-6 max-w-4xl mx-auto">
                         Democratizing Michelin-Grade Culinary Artistry Worldwide.
                     </h1>
                     <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
-                        ChefMii was founded on a simple belief: the world’s most memorable dining experiences shouldn’t require waiting months for a restaurant table. They belong in the intimacy of your home.
+                        ChefMii Global was founded on a simple belief: the world’s most memorable dining experiences shouldn’t require waiting months for a restaurant table. They belong in the intimacy of your home.
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-4">
                         <Link
@@ -103,19 +103,19 @@ export default function AboutPage() {
                 <section className="max-w-5xl mx-auto px-4 sm:px-6 mb-24">
                     <div className="bg-gradient-to-br from-stone-900 to-black text-white rounded-3xl p-8 sm:p-12 shadow-2xl border border-stone-800 relative overflow-hidden">
                         <div className="relative z-10 max-w-3xl space-y-6">
-                            <h2 className="text-2xl sm:text-3xl font-serif font-bold">Why We Built ChefMii</h2>
+                            <h2 className="text-2xl sm:text-3xl font-serif font-bold">Why We Built ChefMii Global</h2>
                             <p className="text-sm sm:text-base text-stone-300 leading-relaxed">
                                 Great chefs spend decades honing their technique in high-pressure Michelin kitchens, only to be disconnected from the guests eating their food. Meanwhile, diners endure overcrowded dining rooms, rushed seatings, and rigid menus.
                             </p>
                             <p className="text-sm sm:text-base text-stone-300 leading-relaxed">
-                                ChefMii bridges this divide with an ultra-secure, escrow-protected booking platform that gives talented private chefs full entrepreneurial independence while giving hosts an unforgettable dining experience where every dish tells a story.
+                                ChefMii Global bridges this divide with an ultra-secure, escrow-protected booking platform that gives talented private chefs full entrepreneurial independence while giving hosts an unforgettable dining experience where every dish tells a story.
                             </p>
                             <div className="pt-4 flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-full gradient-brand flex items-center justify-center font-bold text-lg text-white">
                                     CM
                                 </div>
                                 <div>
-                                    <p className="font-bold text-sm text-white">The ChefMii Founding Team</p>
+                                    <p className="font-bold text-sm text-white">The ChefMii Global Founding Team</p>
                                     <p className="text-xs text-stone-400">London • New York • Dubai • Tokyo</p>
                                 </div>
                             </div>
@@ -127,7 +127,7 @@ export default function AboutPage() {
                 <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-24">
                     <div className="text-center max-w-2xl mx-auto mb-12">
                         <h2 className="text-3xl sm:text-4xl font-serif font-bold text-foreground mb-3">Our Core Standards</h2>
-                        <p className="text-sm text-muted-foreground">Every reservation on ChefMii is backed by uncompromising quality and financial safety.</p>
+                        <p className="text-sm text-muted-foreground">Every reservation on ChefMii Global is backed by uncompromising quality and financial safety.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -164,7 +164,7 @@ export default function AboutPage() {
                 {/* CTA Banner */}
                 <section className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
                     <div className="p-10 sm:p-14 rounded-3xl gradient-brand text-white shadow-2xl space-y-6">
-                        <h2 className="text-3xl sm:text-4xl font-serif font-bold">Ready to Experience ChefMii?</h2>
+                        <h2 className="text-3xl sm:text-4xl font-serif font-bold">Ready to Experience ChefMii Global?</h2>
                         <p className="text-white/90 text-sm sm:text-base max-w-xl mx-auto">
                             Book a verified private chef for your next dinner party, anniversary, or corporate event today.
                         </p>

@@ -514,7 +514,7 @@ function SettingsView() {
                             </span>
                         </div>
                         <p className="text-xs text-muted-foreground leading-relaxed">
-                            Connected to ChefMii Live Marketplace. Client payments are protected in escrow and released directly to your Stripe account upon event completion.
+                            Connected to ChefMii Global Live Marketplace. Client payments are protected in escrow and released directly to your Stripe account upon event completion.
                         </p>
                         
                         <div className="mt-4 p-3 bg-muted/50 rounded-xl space-y-1.5 border border-border/50 text-xs">

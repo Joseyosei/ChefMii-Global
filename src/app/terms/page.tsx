@@ -33,15 +33,15 @@ export default function TermsOfServicePage() {
                         <section className="space-y-3">
                             <h2 className="text-xl font-serif font-bold text-foreground">1. Agreement to Terms</h2>
                             <p>
-                                By creating an account, browsing chefs, booking a private culinary event, or uploading content to ChefTV, you agree to be bound by these Terms of Service (&ldquo;Terms&rdquo;) and all applicable laws and regulations. If you do not agree with any part of these Terms, you must not use the ChefMii platform.
+                                By creating an account, browsing chefs, booking a private culinary event, or uploading content to ChefTV, you agree to be bound by these Terms of Service (&ldquo;Terms&rdquo;) and all applicable laws and regulations. If you do not agree with any part of these Terms, you must not use the ChefMii Global platform.
                             </p>
                         </section>
 
                         {/* Section 2 */}
                         <section className="space-y-3">
-                            <h2 className="text-xl font-serif font-bold text-foreground">2. The ChefMii Marketplace Model</h2>
+                            <h2 className="text-xl font-serif font-bold text-foreground">2. The ChefMii Global Marketplace Model</h2>
                             <p>
-                                ChefMii acts as a technology marketplace connecting independent private chefs (&ldquo;Chefs&rdquo;) with diners and corporate entities (&ldquo;Clients&rdquo;). Chefs on ChefMii are independent culinary professionals and are not employees or direct agents of ChefMii.
+                                ChefMii Global acts as a technology marketplace connecting independent private chefs (&ldquo;Chefs&rdquo;) with diners and corporate entities (&ldquo;Clients&rdquo;). Chefs on ChefMii Global are independent culinary professionals and are not employees or direct agents of ChefMii Global.
                             </p>
                         </section>
 
@@ -51,7 +51,7 @@ export default function TermsOfServicePage() {
                             <ul className="list-disc pl-5 space-y-2">
                                 <li><strong>Escrow Protection:</strong> When a Client books a chef, 100% of the total reservation fee is held securely in Stripe escrow.</li>
                                 <li><strong>Release of Funds:</strong> Funds are automatically released to the Chef&apos;s verified bank account 24 hours after the successful completion of the dining service.</li>
-                                <li><strong>Platform Commission:</strong> ChefMii charges a standard platform facilitation fee (5% to 15% depending on membership tier) to support escrow management, customer concierge, and insurance protection.</li>
+                                <li><strong>Platform Commission:</strong> ChefMii Global charges a standard platform facilitation fee (5% to 15% depending on membership tier) to support escrow management, customer concierge, and insurance protection.</li>
                                 <li><strong>Split-Billing:</strong> Group dining bills can be split among up to 10 guests via personalized payment links. The booking is confirmed once all guest shares are authorized.</li>
                             </ul>
                         </section>
@@ -84,7 +84,7 @@ export default function TermsOfServicePage() {
                         <section className="space-y-3">
                             <h2 className="text-xl font-serif font-bold text-foreground">6. ChefTV & User Content Rights</h2>
                             <p>
-                                By submitting videos, photos, or comments to ChefTV, you grant ChefMii a non-exclusive, worldwide, royalty-free license to display, stream, and promote the content on the ChefMii platform. You affirm that you own or possess the rights to all uploaded content.
+                                By submitting videos, photos, or comments to ChefTV, you grant ChefMii Global a non-exclusive, worldwide, royalty-free license to display, stream, and promote the content on the ChefMii Global platform. You affirm that you own or possess the rights to all uploaded content.
                             </p>
                         </section>
 
@@ -92,7 +92,7 @@ export default function TermsOfServicePage() {
                         <section className="space-y-3">
                             <h2 className="text-xl font-serif font-bold text-foreground">7. Limitation of Liability</h2>
                             <p>
-                                To the maximum extent permitted by applicable law, ChefMii shall not be liable for indirect, incidental, or consequential damages resulting from in-person dining services, food consumption, or host property conditions. ChefMii maintains platform public liability insurance coverage for qualifying events.
+                                To the maximum extent permitted by applicable law, ChefMii Global shall not be liable for indirect, incidental, or consequential damages resulting from in-person dining services, food consumption, or host property conditions. ChefMii Global maintains platform public liability insurance coverage for qualifying events.
                             </p>
                         </section>
 

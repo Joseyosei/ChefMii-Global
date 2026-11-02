@@ -39,7 +39,7 @@ export default function BecomeAChefPage() {
                 <section className="max-w-5xl mx-auto px-4 sm:px-6 text-center mb-16 sm:mb-20">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-terracotta/10 text-terracotta text-xs font-bold mb-6">
                         <ChefHat className="w-3.5 h-3.5" />
-                        Join the Global ChefMii Guild
+                        Join the ChefMii Global Guild
                     </div>
                     <h1 className="text-4xl sm:text-6xl font-serif font-bold text-foreground mb-6 leading-tight">
                         Earn on Your Own Terms. Share Your Culinary Passion.

@@ -58,7 +58,7 @@ const ROLES: JobRole[] = [
         location: 'London / New York',
         type: 'Full-Time',
         experience: '5+ years',
-        desc: 'Scale our ChefMii Business corporate tier, closing multi-chef executive summit packages with Fortune 500 companies and investment firms.',
+        desc: 'Scale our ChefMii Global Business corporate tier, closing multi-chef executive summit packages with Fortune 500 companies and investment firms.',
         tags: ['B2B Sales', 'Corporate Catering', 'Executive Hospitality'],
     },
     {
@@ -74,7 +74,7 @@ const ROLES: JobRole[] = [
 ]
 
 const PERKS = [
-    { icon: UtensilsIcon, title: '£300 Monthly Dining Credit', desc: 'Book private chefs on ChefMii every month on us.' },
+    { icon: UtensilsIcon, title: '£300 Monthly Dining Credit', desc: 'Book private chefs on ChefMii Global every month on us.' },
     { icon: Zap, title: 'Competitive Salary & Equity', desc: 'Meaningful stock option packages for all full-time teammates.' },
     { icon: Coffee, title: 'Remote-First Flexibility', desc: 'Work from anywhere with London and NYC clubhouse access.' },
     { icon: Heart, title: 'Premium Health & Wellness', desc: 'Full medical, dental, optical, and mental health coverage.' },
@@ -264,12 +264,12 @@ export default function CareersPage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold text-foreground mb-1">Why ChefMii? (Short Note)</label>
+                                    <label className="block text-xs font-bold text-foreground mb-1">Why ChefMii Global? (Short Note)</label>
                                     <textarea
                                         rows={3}
                                         value={formData.notes}
                                         onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                                        placeholder="Tell us why you want to join ChefMii and what excites you..."
+                                        placeholder="Tell us why you want to join ChefMii Global and what excites you..."
                                         className="w-full px-4 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-terracotta resize-none"
                                     />
                                 </div>

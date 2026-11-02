@@ -69,7 +69,7 @@ export default function RegisterPage() {
                     <div className="w-16 h-16 rounded-full gradient-brand flex items-center justify-center mx-auto mb-4 text-white">
                         <ChefHat className="w-8 h-8" />
                     </div>
-                    <h2 className="text-2xl font-serif font-bold mb-2">Welcome to ChefMii!</h2>
+                    <h2 className="text-2xl font-serif font-bold mb-2">Welcome to ChefMii Global!</h2>
                     <p className="text-muted-foreground text-sm">Taking you to your dashboard…</p>
                 </div>
             </div>
@@ -114,7 +114,7 @@ export default function RegisterPage() {
                     </div>
 
                     <h1 className="text-3xl font-serif font-bold mb-2">Create Account</h1>
-                    <p className="text-muted-foreground mb-6">Start your ChefMii journey today — it&apos;s free.</p>
+                    <p className="text-muted-foreground mb-6">Start your ChefMii Global journey today — it&apos;s free.</p>
 
                     {/* Role toggle */}
                     <div className="flex rounded-xl border border-border overflow-hidden mb-6">

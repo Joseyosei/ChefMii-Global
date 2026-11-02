@@ -14,7 +14,7 @@ const ROLES: { id: WaitlistRole; label: string; icon: React.ElementType; color: 
     { id: 'chef', label: 'Chefs', icon: ChefHat, color: 'from-orange-500 to-amber-600', desc: 'Join as a private chef to host events & earn' },
     { id: 'business', label: 'Businesses', icon: Building2, color: 'from-blue-500 to-indigo-600', desc: 'Book corporate meals & employee dining plans' },
     { id: 'kid', label: 'Kids & Parents', icon: Baby, color: 'from-pink-500 to-rose-600', desc: 'Gamified cooking challenges & junior classes' },
-    { id: 'tutor', label: 'Tutors', icon: GraduationCap, color: 'from-purple-500 to-violet-600', desc: 'Teach courses & masterclasses on ChefMii Academy' },
+    { id: 'tutor', label: 'Tutors', icon: GraduationCap, color: 'from-purple-500 to-violet-600', desc: 'Teach courses & masterclasses on ChefMii Global Academy' },
     { id: 'client', label: 'Clients', icon: Utensils, color: 'from-emerald-500 to-teal-600', desc: 'Book top chefs for home dinners & events' },
 ]
 
@@ -117,7 +117,7 @@ export function WaitlistModal({ isOpen, onClose, defaultRole = 'chef' }: Waitlis
                             </span>
                             <div>
                                 <h2 className="text-xl font-serif font-bold text-foreground">
-                                    Join the ChefMii VIP Waitlist
+                                    Join the ChefMii Global VIP Waitlist
                                 </h2>
                                 <p className="text-xs text-muted-foreground">
                                     Be first in line when we launch in your area.

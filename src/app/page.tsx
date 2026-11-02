@@ -75,7 +75,7 @@ const TESTIMONIALS = [
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     },
     {
-        quote: 'We use ChefMii for our quarterly executive dinners. The seamless invoicing and high caliber of culinary talent are unmatched.',
+        quote: 'We use ChefMii Global for our quarterly executive dinners. The seamless invoicing and high caliber of culinary talent are unmatched.',
         author: 'Julian Thorne',
         role: 'Managing Director • Vanguard Partners',
         rating: 5,
@@ -106,7 +106,7 @@ export default function HomePage() {
                     <div className="absolute inset-0 z-0">
                         <Image
                             src="/images/hero_bg.jpg"
-                            alt="ChefMii Private Dining"
+                            alt="ChefMii Global Private Dining"
                             fill
                             priority
                             unoptimized
@@ -291,13 +291,13 @@ export default function HomePage() {
                     </div>
                 </section>
 
-                {/* ── 4. HOW CHEFMII WORKS ────────────────────────── */}
+                {/* ── 4. HOW CHEFMII GLOBAL WORKS ─────────────────── */}
                 <section className="py-24 bg-background border-t border-border">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center max-w-3xl mx-auto mb-16">
                             <span className="text-xs font-bold text-terracotta uppercase tracking-widest block mb-2">Simplicity & Luxury</span>
                             <h2 className="text-3xl sm:text-5xl font-serif font-bold text-foreground mb-4">
-                                How ChefMii Works
+                                How ChefMii Global Works
                             </h2>
                             <p className="text-muted-foreground text-base sm:text-lg">
                                 From chef selection to clean kitchen in 3 effortless steps.
@@ -443,7 +443,7 @@ export default function HomePage() {
                             Reserve Your Priority VIP Spot
                         </h2>
                         <p className="text-zinc-400 text-base sm:text-lg max-w-2xl mx-auto mb-8">
-                            Join the official ChefMii waitlist today to receive £50 booking credit and exclusive early invitations to local tasting events.
+                            Join the official ChefMii Global waitlist today to receive £50 booking credit and exclusive early invitations to local tasting events.
                         </p>
                         <div className="flex flex-wrap items-center justify-center gap-4">
                             <Link
