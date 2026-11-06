@@ -59,6 +59,61 @@
         font-feature-settings: "rlig" 1, "calt" 1;
         cursor: url('/cursor-hat.svg') 16 16, auto;
     }
+
+    /*
+     * Accessibility floor. None of this existed before: there was no visible
+     * keyboard-focus style, no reduced-motion handling, and no sr-only helper.
+     *
+     * Visible focus for keyboard users only (:focus-visible, not :focus, so a
+     * mouse click does not leave a ring behind). Uses the brand ring token.
+     */
+    :focus-visible {
+        outline: 2px solid hsl(var(--ring));
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
+
+    /* The custom chef-hat cursor hides the system pointer's affordances on
+       interactive elements; restore the pointer there so buttons still read as
+       clickable. */
+    a,
+    button,
+    [role="button"],
+    label,
+    select,
+    summary {
+        cursor: pointer;
+    }
+
+    /* Respect reduced-motion. The site uses fade-up, shimmer, bounce and hover
+       transitions throughout; honour the OS setting for people who get motion
+       sick or find animation distracting. */
+    @media (prefers-reduced-motion: reduce) {
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+}
+
+@layer utilities {
+    /* Screen-reader-only text: visually hidden, still announced. */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
 }
 
 @layer utilities {
@@ -110,12 +165,17 @@
 }
 
 /* ── Utility extras ───────────────────────────────────── */
-.scrollbar-hide {
+/* `.no-scrollbar` is used in 7 files (filter pills, carousels) but was never
+   defined, so those rows showed a raw horizontal scrollbar. Aliased here
+   alongside the original `.scrollbar-hide` so both names work. */
+.scrollbar-hide,
+.no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
+.scrollbar-hide::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
     display: none;
 }
 

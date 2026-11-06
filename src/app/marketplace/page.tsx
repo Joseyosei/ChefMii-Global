@@ -203,7 +203,7 @@ export default function MarketplacePage() {
             <Navbar />
             <main className="min-h-screen bg-background">
                 {/* Hero */}
-                <div className="gradient-brand py-14 sm:py-20 px-4 text-center text-white relative overflow-hidden">
+                <div className="gradient-brand pt-28 pb-14 sm:pt-32 sm:pb-20 px-4 text-center text-white relative overflow-hidden">
                     <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, white 1px, transparent 1px), radial-gradient(circle at 70% 50%, white 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
                     <div className="relative z-10 max-w-3xl mx-auto">
                         <span className="text-xs font-bold uppercase tracking-widest text-white/70 mb-3 block">🛒 Chef-Curated</span>
