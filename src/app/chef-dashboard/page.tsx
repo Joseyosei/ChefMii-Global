@@ -19,6 +19,7 @@ import {
     serverTimestamp,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase/client'
+import { apiFetch, NotSignedInError } from '@/lib/api-client'
 import {
     LayoutDashboard, Calendar, MessageSquare, Edit3, Image as ImageIcon,
     Settings, LogOut, CheckCircle, XCircle, Clock, Upload,
@@ -407,9 +408,11 @@ function MediaView({ media, removeMedia, user }: { media: ChefMedia[], removeMed
 }
 
 function SettingsView() {
-    const { user, profile } = useAuth()
+    // `user` is no longer needed here: the Stripe Connect endpoint derives the
+    // chef from the verified ID token rather than an id sent from the browser.
+    const { profile } = useAuth()
     const [stripeConnecting, setStripeConnecting] = useState(false)
-    const [stripeSuccess, setStripeSuccess] = useState(false)
+    const [stripeError, setStripeError] = useState<string | null>(null)
     
     // Bank account state
     const [bankName, setBankName] = useState('Barclays Bank PLC')
@@ -433,22 +436,32 @@ function SettingsView() {
 
     const handleConnectStripe = async () => {
         setStripeConnecting(true)
+        setStripeError(null)
         try {
-            const res = await fetch('/api/stripe/connect', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chefId: user?.id || 'marco-rossi', email: profile?.email || 'chef@chefmii.com' })
-            })
-            const data = await res.json()
-            if (data.url) {
-                window.open(data.url, '_blank')
-            } else {
-                setStripeSuccess(true)
-                setTimeout(() => setStripeSuccess(false), 4000)
+            // No chefId in the body: the server keys the connected account to
+            // the verified uid. Passing it let a caller mint an onboarding link
+            // for someone else's account, and the old `|| 'marco-rossi'`
+            // fallback meant a signed-out user hit a real chef's record.
+            const result = await apiFetch<{ url?: string; accountId?: string }>(
+                '/api/stripe/connect',
+                { method: 'POST', body: JSON.stringify({}) }
+            )
+
+            if (result.ok && result.data?.url) {
+                window.open(result.data.url, '_blank', 'noopener,noreferrer')
+                return
             }
-        } catch {
-            setStripeSuccess(true)
-            setTimeout(() => setStripeSuccess(false), 4000)
+
+            // Stripe onboarding either produced a link or it did not. Showing a
+            // success toast on failure, as this previously did, left chefs
+            // believing their bank was connected when it was not.
+            setStripeError(result.error || 'Could not start Stripe onboarding. Please try again.')
+        } catch (e) {
+            setStripeError(
+                e instanceof NotSignedInError
+                    ? 'Please sign in with your chef account to connect Stripe.'
+                    : 'Could not start Stripe onboarding. Please try again.'
+            )
         } finally {
             setStripeConnecting(false)
         }
@@ -549,6 +562,12 @@ function SettingsView() {
                             {stripeConnecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Re-link Stripe'}
                         </button>
                     </div>
+
+                    {stripeError && (
+                        <p role="alert" className="text-xs text-destructive pt-2">
+                            {stripeError}
+                        </p>
+                    )}
                 </div>
 
                 {/* 2. Direct Bank Account Card */}

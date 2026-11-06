@@ -12,6 +12,7 @@ import { useAuth } from '@/context/auth-context'
 import { useCurrency } from '@/context/currency-context'
 import { useToast } from '@/context/toast-context'
 import { CHEF_IMAGES, CHEF_FALLBACKS } from '@/lib/images'
+import { apiFetch, NotSignedInError } from '@/lib/api-client'
 import {
     Calendar, Users, MapPin, Clock, ChefHat, Loader2, CheckCircle,
     Star, MessageCircle, X, Send, ShieldCheck
@@ -236,9 +237,11 @@ export default function ChefProfileAndBooking() {
         if (!date || !location) { alert('Please fill in the date and event location.'); return }
         setLoading(true)
         try {
-            const res = await fetch('/api/checkout', {
+            // The ID token is what authenticates this call. `userId` is no
+            // longer sent: the server derives identity from the token, because
+            // trusting a body field let anyone book as another user.
+            const result = await apiFetch<{ url?: string; bookingId?: string }>('/api/checkout', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     chefId: chef.id,
                     chefName: chef.name,
@@ -251,21 +254,33 @@ export default function ChefProfileAndBooking() {
                     location,
                     specialRequests: notes,
                     depositOnly: isDeposit,
-                    userId: user.id,
                     email: user.email,
                 })
             })
-            const data = await res.json()
-            if (data.url) {
-                window.location.href = data.url
-            } else if (data.success) {
-                setBookingComplete(true)
-            } else {
-                alert(data.error || 'Failed to initiate checkout.')
+
+            if (result.ok && result.data?.url) {
+                window.location.href = result.data.url
+                return
             }
+
+            if (result.ok) {
+                // Succeeded with no payment redirect (nothing left to charge).
+                // The booking is recorded, so confirm it inline.
+                setBookingComplete(true)
+                return
+            }
+
+            // A failure must never render as a completed booking. The previous
+            // version called setBookingComplete(true) from the catch block, so
+            // a failed checkout looked successful to the guest.
+            alert(result.error || 'We could not start the payment. Your card has not been charged.')
         } catch (e) {
+            if (e instanceof NotSignedInError) {
+                router.push(`/login?redirectTo=/book/${chefId}`)
+                return
+            }
             console.error('Booking checkout error:', e)
-            setBookingComplete(true)
+            alert('We could not start the payment. Your card has not been charged. Please try again.')
         } finally {
             setLoading(false)
         }
