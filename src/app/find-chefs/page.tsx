@@ -70,8 +70,10 @@ function FindChefsContent() {
 
     return (
         <main className="min-h-screen bg-stone-50 dark:bg-stone-950 pb-20">
-            {/* Search header */}
-            <div className="gradient-brand py-10 sm:py-16">
+            {/* Search header. Top padding clears the fixed floating navbar
+                (top-3 + ~56px tall); without it the heading rendered under the
+                nav on load. The gradient still sits full-bleed behind the nav. */}
+            <div className="gradient-brand pt-28 pb-10 sm:pt-32 sm:pb-16">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
                     <h1 className="text-3xl sm:text-5xl font-serif font-bold text-white mb-3 sm:mb-4">Find Your Perfect Chef</h1>
                     <p className="text-white/80 mb-6 sm:mb-8 text-sm sm:text-lg">Browse verified master chefs across 16 countries worldwide</p>
