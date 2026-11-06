@@ -49,7 +49,7 @@ export default function BecomeAChefPage() {
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-4">
                         <Link
-                            href="/register?role=chef"
+                            href="/become-a-chef/apply"
                             className="px-8 py-3.5 rounded-2xl gradient-brand text-white font-bold text-sm shadow-xl hover:opacity-90 transition-all flex items-center gap-2"
                         >
                             <ChefHat className="w-4 h-4" />
@@ -111,7 +111,7 @@ export default function BecomeAChefPage() {
 
                         <div className="mt-8 text-center">
                             <Link
-                                href="/register?role=chef"
+                                href="/become-a-chef/apply"
                                 className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-white text-black font-bold text-sm hover:bg-stone-100 shadow-lg transition-all"
                             >
                                 Start Your Chef Application →
