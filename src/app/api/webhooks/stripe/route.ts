@@ -8,17 +8,62 @@ export const dynamic = 'force-dynamic'
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ''
 
+/**
+ * Read a field that exists on the Stripe webhook payload but not on the
+ * TypeScript type for the pinned API version.
+ *
+ * Stripe moved `Invoice.subscription` and `Subscription.current_period_end` in
+ * recent API versions, so the generated types no longer declare them even
+ * though the JSON still carries them. These helpers narrow through `unknown`
+ * instead of casting to `any`, so a wrong assumption fails safely as null
+ * rather than silently producing undefined.
+ */
+function readStringField(source: object, field: string): string | null {
+    const value = (source as Record<string, unknown>)[field]
+    return typeof value === 'string' ? value : null
+}
+
+/** Read a Unix-seconds timestamp field and convert it to a Date. */
+function readUnixSeconds(source: object, field: string): Date {
+    const value = (source as Record<string, unknown>)[field]
+    return typeof value === 'number' && Number.isFinite(value)
+        ? new Date(value * 1000)
+        : new Date()
+}
+
 export async function POST(request: NextRequest) {
     const body = await request.text()
     const signature = request.headers.get('stripe-signature') || ''
 
     let event: Stripe.Event
 
+    /**
+     * SECURITY: the previous version fell back to `JSON.parse(body)` whenever a
+     * signature or secret was absent. Anyone who could reach this URL could
+     * POST a fabricated `checkout.session.completed` naming any bookingId and
+     * have it marked paid, confirmed and eligible for a chef payout, without
+     * paying anything. A signature is now mandatory outside development.
+     */
+    const isProduction = process.env.NODE_ENV === 'production'
+
+    if (!webhookSecret || !signature) {
+        if (isProduction) {
+            console.error(
+                'Stripe webhook rejected: STRIPE_WEBHOOK_SECRET or stripe-signature header is missing.',
+            )
+            return NextResponse.json(
+                { error: 'Webhook signature verification is required.' },
+                { status: 400 },
+            )
+        }
+        console.warn('[stripe webhook] running unsigned. Development only.')
+    }
+
     try {
         if (webhookSecret && signature) {
             event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
         } else {
-            // Unsigned/development fallback
+            // Development only: unreachable in production thanks to the guard above.
             event = JSON.parse(body) as Stripe.Event
         }
     } catch (err: unknown) {
@@ -118,18 +163,47 @@ export async function POST(request: NextRequest) {
             // ── 4. Connected Account Updated (Stripe Connect Onboarding) ──
             case 'account.updated': {
                 const account = event.data.object as Stripe.Account
+
+                // `details_submitted` alone does not mean money can move: an
+                // account can submit everything and still be restricted.
+                // payouts_enabled is what the escrow release actually needs.
+                const status = account.details_submitted
+                    ? account.payouts_enabled
+                        ? 'active'
+                        : 'restricted'
+                    : 'pending'
+
+                const payload = {
+                    chargesEnabled: Boolean(account.charges_enabled),
+                    payoutsEnabled: Boolean(account.payouts_enabled),
+                    charges_enabled: Boolean(account.charges_enabled),
+                    payouts_enabled: Boolean(account.payouts_enabled),
+                    stripeStatus: status,
+                    stripe_status: status,
+                    updatedAt: FieldValue.serverTimestamp(),
+                    updated_at: FieldValue.serverTimestamp(),
+                }
+
                 try {
-                    const chefSnaps = await adminDb.collection('chefs')
-                        .where('stripe_account_id', '==', account.id)
-                        .limit(1)
-                        .get()
-                    if (!chefSnaps.empty) {
-                        await chefSnaps.docs[0].ref.update({
-                            charges_enabled: account.charges_enabled,
-                            payouts_enabled: account.payouts_enabled,
-                            stripe_status: account.details_submitted ? 'active' : 'pending',
-                            updated_at: FieldValue.serverTimestamp(),
-                        })
+                    // The chef metadata carries the uid, which is also the
+                    // document id, so prefer that over a field query.
+                    const chefId = account.metadata?.chefId
+
+                    if (chefId) {
+                        await adminDb.collection('chefs').doc(chefId).set(payload, { merge: true })
+                        break
+                    }
+
+                    // Fall back to a lookup on either field spelling.
+                    for (const field of ['stripeAccountId', 'stripe_account_id']) {
+                        const snaps = await adminDb.collection('chefs')
+                            .where(field, '==', account.id)
+                            .limit(1)
+                            .get()
+                        if (!snaps.empty) {
+                            await snaps.docs[0].ref.set(payload, { merge: true })
+                            break
+                        }
                     }
                 } catch (dbErr) {
                     console.warn('Firestore update warning in webhook account.updated:', dbErr)
@@ -176,7 +250,10 @@ export async function POST(request: NextRequest) {
                             subscription_status: sub.status,
                             subscription_id: sub.id,
                             subscription_plan: planId || 'plus-monthly',
-                            subscription_current_period_end: (sub as any).current_period_end ? new Date((sub as any).current_period_end * 1000) : new Date(),
+                            // `current_period_end` is not on Stripe.Subscription
+                            // in this pinned API version's types, so read it
+                            // through a narrow shape rather than casting to any.
+                            subscription_current_period_end: readUnixSeconds(sub, 'current_period_end'),
                             updated_at: FieldValue.serverTimestamp(),
                         }, { merge: true })
                     }
@@ -208,7 +285,7 @@ export async function POST(request: NextRequest) {
             // ── 8. Recurring Invoice Payment Succeeded ──
             case 'invoice.payment_succeeded': {
                 const invoice = event.data.object as Stripe.Invoice
-                const subId = typeof (invoice as any).subscription === 'string' ? (invoice as any).subscription : null
+                const subId = readStringField(invoice, 'subscription')
                 try {
                     if (subId) {
                         const snaps = await adminDb.collection('subscriptions')

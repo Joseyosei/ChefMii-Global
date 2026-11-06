@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider, type Auth } from 'firebase/auth'
 import { getFirestore, type Firestore } from 'firebase/firestore'
+import { getStorage, type FirebaseStorage } from 'firebase/storage'
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'demo-api-key',
@@ -14,6 +15,8 @@ const firebaseConfig = {
 const app: FirebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig)
 const auth: Auth = getAuth(app)
 const db: Firestore = getFirestore(app)
+// Storage backs verification document uploads and ChefTV video uploads.
+const storage: FirebaseStorage = getStorage(app)
 const googleProvider = new GoogleAuthProvider()
 
-export { app, auth, db, googleProvider }
+export { app, auth, db, storage, googleProvider }
