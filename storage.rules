@@ -1,0 +1,70 @@
+rules_version = '2';
+
+// Cloud Storage rules for ChefMii Global.
+//
+// Deploy with:  firebase deploy --only storage
+//
+// Paths here mirror STORAGE_PATHS in src/lib/firebase/collections.ts. Keep the
+// two in step: a change in one place without the other silently breaks uploads.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'admin';
+    }
+
+    function isAllowedDocument() {
+      return request.resource.size < 10 * 1024 * 1024
+        && (
+          request.resource.contentType.matches('image/(jpeg|png|webp)')
+          || request.resource.contentType == 'application/pdf'
+        );
+    }
+
+    function isAllowedVideo() {
+      return request.resource.size < 200 * 1024 * 1024
+        && request.resource.contentType.matches('video/(mp4|quicktime|webm)');
+    }
+
+    // ── Verification documents: PRIVATE ────────────────────────────────
+    // Government ID, selfies, certificates and insurance. Readable only by the
+    // chef who uploaded them and by admins reviewing the application. These
+    // must never be world-readable: they contain identity documents.
+    match /chef-documents/{userId}/{documentId}/{filename} {
+      allow read: if isOwner(userId) || isAdmin();
+      // Write once. No overwriting a reviewed document with a different file.
+      allow create: if isOwner(userId)
+        && (isAllowedDocument() || isAllowedVideo());
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    // ── Chef gallery images: PUBLIC ────────────────────────────────────
+    match /chef-gallery/{userId}/{filename} {
+      allow read: if true;
+      allow write: if isOwner(userId) && isAllowedDocument();
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+
+    // ── ChefTV videos: PUBLIC ─────────────────────────────────────────
+    match /chef-media/{userId}/{filename} {
+      allow read: if true;
+      allow write: if isOwner(userId) && isAllowedVideo();
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+
+    // ── Default deny ──────────────────────────────────────────────────
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

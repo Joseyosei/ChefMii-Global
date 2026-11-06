@@ -1,49 +1,204 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
+    // ══════════════════════════════════════════════════════════════════
     // Helper functions
+    // ══════════════════════════════════════════════════════════════════
+
     function isAuthenticated() {
       return request.auth != null;
     }
-    
+
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // ── Waitlist: Public can create (join), only admin can read/modify ──
+    // An admin custom claim is preferred because it is signed and cannot be
+    // forged by a client. We also accept users/{uid}.role == 'admin' because
+    // that is what the current sign-up flow writes.
+    // `data.get('role', '')` rather than `data.role`: a user document that
+    // exists but has no `role` field makes the direct property access raise an
+    // evaluation error, which aborts the whole rule expression. Reading with a
+    // default keeps the check total.
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'admin' ||
+        (
+          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'admin'
+        )
+      );
+    }
+
+    // True when the incoming write does not touch any of `fields`.
+    function doesNotChange(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // Waitlist: public can join, nobody can read back
+    // ══════════════════════════════════════════════════════════════════
+
     match /waitlist/{docId} {
       allow create: if true;
       allow read, update, delete: if false;
     }
 
-    // ── Users / Profiles: Only owner can read/write their own document ──
+    // ══════════════════════════════════════════════════════════════════
+    // Users / Profiles
+    // ══════════════════════════════════════════════════════════════════
+
+    // SECURITY: the previous rule was `allow write: if isOwner(userId)` with no
+    // field restrictions, which let any signed-in user set their own
+    // `role: 'admin'` and take over the admin console. Creation still accepts a
+    // self-chosen role (the sign-up form needs that) but 'admin' is excluded,
+    // and the privileged fields below can only ever be written server-side via
+    // the Admin SDK, which bypasses these rules.
     match /users/{userId} {
       allow read: if isAuthenticated();
-      allow write: if isOwner(userId);
-    }
-    
-    match /profiles/{userId} {
-      allow read: if isAuthenticated();
-      allow write: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+        && (!('role' in request.resource.data) || request.resource.data.role != 'admin');
+
+      allow update: if isOwner(userId)
+        && doesNotChange([
+             'role',
+             'stripe_account_id',
+             'stripe_status',
+             'charges_enabled',
+             'payouts_enabled',
+             'subscription_status',
+             'subscription_plan',
+             'subscription_id'
+           ]);
+
+      allow update, delete: if isAdmin();
     }
 
-    // ── Bookings: Only client or assigned chef can read/write ──
+    match /profiles/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId)
+        && (!('role' in request.resource.data) || request.resource.data.role != 'admin');
+      allow write: if isAdmin();
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // Chef directory
+    // ══════════════════════════════════════════════════════════════════
+
+    // This collection previously had NO rule at all, so it fell through to the
+    // default deny and every client-side read of the chef directory failed.
+    // Published chefs are public; a chef may edit presentation fields on their
+    // own record but never their own verification state or payment wiring.
+    match /chefs/{chefId} {
+      allow read: if resource.data.isPublished == true
+                  || isOwner(chefId)
+                  || isAdmin();
+
+      allow update: if isOwner(chefId)
+        && doesNotChange([
+             'isVerified',
+             'isPublished',
+             'badgeTier',
+             'avgRating',
+             'totalReviews',
+             'stripeAccountId',
+             'stripeStatus',
+             'chargesEnabled',
+             'payoutsEnabled',
+             'userId'
+           ]);
+
+      allow create, delete: if isAdmin();
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // Chef onboarding
+    // ══════════════════════════════════════════════════════════════════
+
+    // Doc id === applicant uid, so one person cannot open competing
+    // applications. Applicants may edit only while the application is still
+    // theirs to edit; once submitted, status is server-controlled.
+    match /chef_applications/{applicantId} {
+      allow read: if isOwner(applicantId) || isAdmin();
+      allow create: if isOwner(applicantId)
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status in ['draft', 'submitted'];
+      allow update: if isOwner(applicantId)
+        && resource.data.status in ['draft', 'changes_requested']
+        && doesNotChange(['decidedAt', 'decidedBy', 'rejectionReason', 'userId']);
+      allow update, delete: if isAdmin();
+    }
+
+    // Verification state is decided by admins only. The applicant can watch
+    // their own progress but can never write it.
+    match /chef_verification/{applicantId} {
+      allow read: if isOwner(applicantId) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Document metadata. Append-only for the owner: they may add a document
+    // but never alter or remove one after the fact, so an audit trail survives.
+    match /chef_documents/{documentId} {
+      allow read: if isAdmin()
+                  || (isAuthenticated() && resource.data.chefId == request.auth.uid);
+      allow create: if isAuthenticated()
+        && request.resource.data.chefId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // Bookings
+    // ══════════════════════════════════════════════════════════════════
+
+    // Clients and chefs may read and update their own bookings, but the money
+    // and escrow fields are written server-side only.
     match /bookings/{bookingId} {
       allow read: if isAuthenticated() && (
         resource.data.client_id == request.auth.uid ||
         resource.data.user_id == request.auth.uid ||
         resource.data.chef_id == request.auth.uid
-      );
+      ) || isAdmin();
+
       allow create: if isAuthenticated() && request.resource.data.client_id == request.auth.uid;
+
       allow update: if isAuthenticated() && (
         resource.data.client_id == request.auth.uid ||
         resource.data.chef_id == request.auth.uid
-      );
+      ) && doesNotChange([
+             'total_amount',
+             'platform_fee',
+             'chef_payout',
+             'payment_status',
+             'payout_status',
+             'stripe_payment_intent_id',
+             'stripe_transfer_id',
+             'stripe_session_id'
+           ]);
+
+      allow update: if isAdmin();
       allow delete: if false;
     }
 
-    // ── Conversations & Realtime Messages ──
+    // ══════════════════════════════════════════════════════════════════
+    // Payouts and audit: server-side only, never readable by a client
+    // ══════════════════════════════════════════════════════════════════
+
+    match /payouts/{payoutId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    match /admin_audit/{entryId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // Conversations & realtime messages
+    // ══════════════════════════════════════════════════════════════════
+
     match /conversations/{conversationId} {
       allow read, update: if isAuthenticated() && (
         resource.data.participant1 == request.auth.uid ||
@@ -53,7 +208,7 @@ service cloud.firestore {
         request.resource.data.participant1 == request.auth.uid ||
         request.resource.data.participant2 == request.auth.uid
       );
-      
+
       match /messages/{messageId} {
         allow read: if isAuthenticated() && (
           get(/databases/$(database)/documents/conversations/$(conversationId)).data.participant1 == request.auth.uid ||
@@ -64,11 +219,15 @@ service cloud.firestore {
       }
     }
 
-    // ── Chef Media & Reels: Publicly readable, writable by owner ──
+    // ══════════════════════════════════════════════════════════════════
+    // ChefTV media
+    // ══════════════════════════════════════════════════════════════════
+
     match /chef_media/{mediaId} {
       allow read: if true;
       allow create: if isAuthenticated() && request.resource.data.chef_id == request.auth.uid;
       allow update, delete: if isAuthenticated() && resource.data.chef_id == request.auth.uid;
+      allow update, delete: if isAdmin();
 
       match /comments/{commentId} {
         allow read: if true;
@@ -77,15 +236,61 @@ service cloud.firestore {
       }
     }
 
-    // ── Corporate Requests ──
+    // ══════════════════════════════════════════════════════════════════
+    // Reviews: public to read, writable once by the paying client
+    // ══════════════════════════════════════════════════════════════════
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isAuthenticated()
+        && request.resource.data.reviewer_id == request.auth.uid
+        && request.resource.data.rating is number
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow update: if isAuthenticated()
+        && resource.data.reviewer_id == request.auth.uid
+        && doesNotChange(['reviewer_id', 'chef_id', 'booking_id']);
+      allow delete: if isAdmin();
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // Notifications: owner reads, and may only mark as read
+    // ══════════════════════════════════════════════════════════════════
+
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+      allow update: if isAuthenticated()
+        && resource.data.user_id == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['is_read']);
+      allow create, delete: if isAdmin();
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // Corporate requests
+    // ══════════════════════════════════════════════════════════════════
+
     match /corporate_requests/{requestId} {
       allow read, write: if isAuthenticated() && (
         resource.data.business_id == request.auth.uid ||
         request.resource.data.business_id == request.auth.uid
       );
+      allow read: if isAdmin();
     }
 
-    // ── Default Deny All ──
+    // ══════════════════════════════════════════════════════════════════
+    // Subscriptions: server-written, owner-readable
+    // ══════════════════════════════════════════════════════════════════
+
+    match /subscriptions/{subscriptionId} {
+      allow read: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // Default deny
+    // ══════════════════════════════════════════════════════════════════
+
     match /{document=**} {
       allow read, write: if false;
     }
