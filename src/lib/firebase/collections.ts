@@ -24,6 +24,10 @@ export const COLLECTIONS = {
   /** Subcollection under CONVERSATIONS. */
   MESSAGES: 'messages',
   CHEF_MEDIA: 'chef_media',
+  /** CheftTV engagement. Doc ids are `{uid}_{targetId}` for natural dedupe. */
+  MEDIA_LIKES: 'media_likes',
+  MEDIA_SAVES: 'media_saves',
+  CHEF_FOLLOWS: 'chef_follows',
   CORPORATE_REQUESTS: 'corporate_requests',
   SUBSCRIPTIONS: 'subscriptions',
 
