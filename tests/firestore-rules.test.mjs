@@ -23,7 +23,7 @@
  */
 
 import { initializeTestEnvironment, assertFails, assertSucceeds } from '@firebase/rules-unit-testing'
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { readFileSync } from 'node:fs'
 
 const env = await initializeTestEnvironment({
@@ -61,6 +61,10 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   await setDoc(doc(db, 'users/dave'), { email: 'd@x.com', role: 'chef' })
   await setDoc(doc(db, 'users/noRole'), { email: 'n@x.com' })
   await setDoc(doc(db, 'bookings/bk2'), { client_id: 'alice', chef_id: 'bob', total_amount: 100, payment_status: 'pending', payout_status: 'unpaid', status: 'pending_payment' })
+  // CheftTV fixtures.
+  await setDoc(doc(db, 'chef_media/m1'), { chef_id: 'bob', title: 'Carbonara', video_url: 'https://x/v.mp4', likes: 5, views: 10, comments_count: 0, bookings_generated: 0 })
+  await setDoc(doc(db, 'media_likes/alice_m1'), { user_id: 'alice', media_id: 'm1' })
+  await setDoc(doc(db, 'chef_follows/alice_bob'), { follower_id: 'alice', chef_id: 'bob' })
 })
 
 const alice = env.authenticatedContext('alice').firestore()
@@ -124,6 +128,27 @@ await t('roleless user is NOT treated as admin', () => assertFails(getDoc(doc(no
 console.log('\n--- WAITLIST (unchanged behaviour) ---')
 await t('anon CAN join waitlist', () => assertSucceeds(setDoc(doc(anon,'waitlist/w1'), { email: 'x@y.com' })))
 await t('anon CANNOT read waitlist', () => assertFails(getDoc(doc(anon,'waitlist/w1'))))
+
+console.log('\n--- CHEFTV: media read + counter-only updates ---')
+await t('anyone CAN read a reel', () => assertSucceeds(getDoc(doc(anon,'chef_media/m1'))))
+await t('viewer CAN increment likes counter only', () => assertSucceeds(updateDoc(doc(alice,'chef_media/m1'), { likes: 6 })))
+await t('viewer CAN increment views counter only', () => assertSucceeds(updateDoc(doc(alice,'chef_media/m1'), { views: 11 })))
+await t('viewer CANNOT edit a reel title', () => assertFails(updateDoc(doc(alice,'chef_media/m1'), { title: 'Hijacked' })))
+await t('viewer CANNOT change the video URL', () => assertFails(updateDoc(doc(alice,'chef_media/m1'), { video_url: 'https://evil/x.mp4' })))
+await t('viewer CANNOT change ownership', () => assertFails(updateDoc(doc(alice,'chef_media/m1'), { chef_id: 'alice' })))
+await t('owner CAN edit own reel title', () => assertSucceeds(updateDoc(doc(bob,'chef_media/m1'), { title: 'Carbonara v2' })))
+await t('non-owner CANNOT create a reel as someone else', () => assertFails(setDoc(doc(alice,'chef_media/m2'), { chef_id: 'bob', title: 'fake' })))
+await t('chef CAN create own reel', () => assertSucceeds(setDoc(doc(bob,'chef_media/m3'), { chef_id: 'bob', title: 'Real', video_url: 'https://x/y.mp4' })))
+
+console.log('\n--- CHEFTV: likes + follows ---')
+await t('user CAN like (create own like doc)', () => assertSucceeds(setDoc(doc(bob,'media_likes/bob_m1'), { user_id: 'bob', media_id: 'm1' })))
+await t('user CANNOT like as someone else', () => assertFails(setDoc(doc(alice,'media_likes/bob_m99'), { user_id: 'bob', media_id: 'm99' })))
+await t('user CAN remove own like', () => assertSucceeds(deleteDoc(doc(alice,'media_likes/alice_m1'))))
+await t('user CANNOT read another user\'s like', () => assertFails(getDoc(doc(bob,'media_likes/alice_m1'))))
+await t('user CAN follow a chef', () => assertSucceeds(setDoc(doc(bob,'chef_follows/bob_carol'), { follower_id: 'bob', chef_id: 'carol' })))
+await t('user CANNOT follow as someone else', () => assertFails(setDoc(doc(alice,'chef_follows/bob_carol2'), { follower_id: 'bob', chef_id: 'carol2' })))
+await t('user CANNOT follow themselves', () => assertFails(setDoc(doc(alice,'chef_follows/alice_alice'), { follower_id: 'alice', chef_id: 'alice' })))
+await t('user CAN unfollow', () => assertSucceeds(deleteDoc(doc(alice,'chef_follows/alice_bob'))))
 
 await env.cleanup()
 console.log(`\n${fail === 0 ? 'ALL RULES TESTS PASSED' : fail + ' RULES TEST(S) FAILED'}  (${pass} passed, ${fail} failed)`)
