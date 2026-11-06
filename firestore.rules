@@ -226,14 +226,53 @@ service cloud.firestore {
     match /chef_media/{mediaId} {
       allow read: if true;
       allow create: if isAuthenticated() && request.resource.data.chef_id == request.auth.uid;
+
+      // The owner (or an admin) may edit the whole document.
       allow update, delete: if isAuthenticated() && resource.data.chef_id == request.auth.uid;
       allow update, delete: if isAdmin();
+
+      // Any signed-in viewer may touch ONLY the engagement counters, so a like
+      // or a view can increment the aggregate without granting write access to
+      // the video's title, URL or ownership.
+      allow update: if isAuthenticated()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['likes', 'views', 'comments_count', 'bookings_generated']);
 
       match /comments/{commentId} {
         allow read: if true;
         allow create: if isAuthenticated() && request.resource.data.user_id == request.auth.uid;
         allow update, delete: if isAuthenticated() && resource.data.user_id == request.auth.uid;
       }
+    }
+
+    // ── CheftTV engagement: likes, saves, follows ──────────────────────
+    // Doc id convention is `{uid}_{targetId}`, and each rule pins the owner
+    // field to the caller, so one user can never like or follow as another.
+    match /media_likes/{likeId} {
+      allow read: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.user_id == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+      allow update: if false;
+    }
+
+    match /media_saves/{saveId} {
+      allow read: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.user_id == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+      allow update: if false;
+    }
+
+    match /chef_follows/{followId} {
+      // A chef may read their own follower documents; a user may read their own.
+      allow read: if isAuthenticated() && (
+        resource.data.follower_id == request.auth.uid ||
+        resource.data.chef_id == request.auth.uid
+      );
+      allow create: if isAuthenticated()
+        && request.resource.data.follower_id == request.auth.uid
+        && request.resource.data.follower_id != request.resource.data.chef_id;
+      allow delete: if isAuthenticated() && resource.data.follower_id == request.auth.uid;
+      allow update: if false;
     }
 
     // ══════════════════════════════════════════════════════════════════

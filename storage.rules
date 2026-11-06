@@ -55,10 +55,12 @@ service firebase.storage {
       allow delete: if isOwner(userId) || isAdmin();
     }
 
-    // ── ChefTV videos: PUBLIC ─────────────────────────────────────────
+    // ── ChefTV videos + their poster frames: PUBLIC ───────────────────
+    // The video itself must pass isAllowedVideo; the client also uploads a
+    // captured JPEG poster alongside it, so an image is permitted here too.
     match /chef-media/{userId}/{filename} {
       allow read: if true;
-      allow write: if isOwner(userId) && isAllowedVideo();
+      allow write: if isOwner(userId) && (isAllowedVideo() || isAllowedDocument());
       allow delete: if isOwner(userId) || isAdmin();
     }
 
