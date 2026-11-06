@@ -28,6 +28,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         const newToast: ToastMessage = { id, title, description, type }
         setToasts((prev) => [...prev, newToast])
 
+        // Visual flash alert for deaf & hard-of-hearing users
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('chefmii_a11y_alert'))
+        }
+
         setTimeout(() => {
             setToasts((prev) => prev.filter((t) => t.id !== id))
         }, 4000)

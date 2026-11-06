@@ -3,6 +3,8 @@ import { Roboto, Libre_Caslon_Text } from 'next/font/google'
 import { AuthProvider } from '@/context/auth-context'
 import { CurrencyProvider } from '@/context/currency-context'
 import { ToastProvider } from '@/context/toast-context'
+import { AccessibilityProvider } from '@/context/accessibility-context'
+import { AccessibilityWidget } from '@/components/layout/accessibility-widget'
 import { CookieBanner } from '@/components/layout/cookie-banner'
 import { ChatbotWidget } from '@/components/chatbot/chatbot-widget'
 import './globals.css'
@@ -92,12 +94,20 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 />
             </head>
             <body className="min-h-screen bg-background font-sans antialiased">
+                <a href="#main-content" className="skip-to-main-link">
+                    Skip to main content (Alt + S)
+                </a>
                 <AuthProvider>
                     <CurrencyProvider>
                         <ToastProvider>
-                            {children}
-                            <CookieBanner />
-                            <ChatbotWidget />
+                            <AccessibilityProvider>
+                                <div id="main-content" tabIndex={-1} className="focus:outline-none">
+                                    {children}
+                                </div>
+                                <CookieBanner />
+                                <ChatbotWidget />
+                                <AccessibilityWidget />
+                            </AccessibilityProvider>
                         </ToastProvider>
                     </CurrencyProvider>
                 </AuthProvider>

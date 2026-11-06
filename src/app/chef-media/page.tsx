@@ -22,9 +22,10 @@ import { useAuth } from '@/context/auth-context'
 import {
     Heart, MessageCircle, Bookmark, Share2, Volume2, VolumeX,
     Plus, X, ChefHat, Search, Home, Bell, User as UserIcon,
-    Send, Loader2, Upload, CheckCircle, Sparkles,
+    Send, Loader2, Upload, CheckCircle, Sparkles, FileText,
 } from 'lucide-react'
 import { BrandLogo } from '@/components/layout/logo'
+import { useAccessibility } from '@/context/accessibility-context'
 
 /* ── Types ───────────────────────────────────────────────────── */
 interface MediaItem {
@@ -519,6 +520,7 @@ function VideoCard({
     item: MediaItem; index: number; active: boolean; activeIdx: number; muted: boolean; onMuteToggle: () => void
 }) {
     const { user } = useAuth()
+    const { settings } = useAccessibility()
     const router = useRouter()
     const videoRef = useRef<HTMLVideoElement>(null)
     const [liked, setLiked] = useState(item.isLiked ?? false)
@@ -529,6 +531,8 @@ function VideoCard({
     const [playing, setPlaying] = useState(false)
     const [showHeart, setShowHeart] = useState(false)
     const [comments, setComments] = useState(false)
+    const [showTranscript, setShowTranscript] = useState(false)
+    const [showCC, setShowCC] = useState(settings?.closedCaptions ?? true)
     const lastTapRef = useRef(0)
 
     // Virtualization: only load heavy video when user is within 1 card of it
@@ -691,13 +695,30 @@ function VideoCard({
                 </div>
             )}
 
-            {/* Volume button — top right */}
-            <button
-                onClick={e => { e.stopPropagation(); onMuteToggle() }}
-                className="absolute top-16 right-4 z-20 w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
-            >
-                {muted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
-            </button>
+            {/* Volume & Closed Captions buttons — top right */}
+            <div className="absolute top-16 right-4 z-20 flex items-center gap-2">
+                <button
+                    onClick={e => { e.stopPropagation(); setShowCC(!showCC) }}
+                    className={`h-10 px-3 rounded-full flex items-center gap-1 font-bold text-xs backdrop-blur-sm transition-colors border ${
+                        showCC
+                            ? 'bg-amber-400 text-stone-950 border-amber-300 shadow-md'
+                            : 'bg-black/50 text-white border-white/20'
+                    }`}
+                    aria-label="Toggle closed captions"
+                    title="Toggle Closed Captions (CC)"
+                >
+                    <span>CC</span>
+                    <span className="text-[10px] opacity-75">{showCC ? 'ON' : 'OFF'}</span>
+                </button>
+
+                <button
+                    onClick={e => { e.stopPropagation(); onMuteToggle() }}
+                    className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center border border-white/20"
+                    aria-label={muted ? "Unmute video" : "Mute video"}
+                >
+                    {muted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
+                </button>
+            </div>
 
             {/* Right action sidebar */}
             <div className="absolute right-3 bottom-28 sm:bottom-32 z-20 flex flex-col items-center gap-5">
@@ -720,6 +741,18 @@ function VideoCard({
                 <button onClick={e => { e.stopPropagation(); handleShare() }} className="flex flex-col items-center gap-1">
                     <Share2 className="w-7 h-7 text-white drop-shadow-lg" />
                     <span className="text-white text-xs font-semibold drop-shadow">Share</span>
+                </button>
+                {/* CC & Video Transcript for Hearing Impaired */}
+                <button
+                    onClick={e => { e.stopPropagation(); setShowTranscript(true) }}
+                    className="flex flex-col items-center gap-1"
+                    aria-label="View video transcript and culinary technique description"
+                    title="View Transcript"
+                >
+                    <div className="w-8 h-8 rounded-full bg-amber-400 text-stone-950 font-bold text-xs flex items-center justify-center shadow-lg border border-white/50">
+                        CC
+                    </div>
+                    <span className="text-white text-[10px] font-semibold drop-shadow">Transcript</span>
                 </button>
                 {/* Chef avatar + follow */}
                 <div className="flex flex-col items-center gap-1">
@@ -777,6 +810,80 @@ function VideoCard({
                     Book This Chef
                 </Link>
             </div>
+
+            {/* On-Screen Closed Caption (CC) Subtitle Box */}
+            {showCC && (
+                <div className="absolute bottom-28 sm:bottom-32 left-4 right-16 z-20 pointer-events-none">
+                    <div className="inline-block max-w-full bg-black/85 backdrop-blur-md text-amber-300 font-bold text-xs sm:text-sm px-3.5 py-1.5 rounded-xl border border-amber-400/30 shadow-2xl">
+                        <span className="text-white/70 font-semibold text-[10px] uppercase mr-2 tracking-wider">
+                            [CC: {item.chef?.full_name ?? 'Chef'}]
+                        </span>
+                        <span>&ldquo;{item.description || item.title}&rdquo;</span>
+                    </div>
+                </div>
+            )}
+
+            {/* Transcript Modal Drawer for Hearing Impaired Users */}
+            {showTranscript && (
+                <div
+                    className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-150"
+                    onClick={(e) => { e.stopPropagation(); setShowTranscript(false) }}
+                >
+                    <div
+                        className="w-full max-w-md bg-stone-900 text-white rounded-3xl border border-stone-700 p-6 shadow-2xl space-y-4 max-h-[80vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between border-b border-stone-800 pb-3">
+                            <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs">
+                                    CC
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-sm text-white">Reel Transcript & Technique</h4>
+                                    <p className="text-[11px] text-stone-400">Accommodations for Deaf & Hard of Hearing guests</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setShowTranscript(false)}
+                                className="p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-stone-800"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+
+                        <div className="space-y-3 text-xs leading-relaxed">
+                            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800">
+                                <p className="text-[10px] font-bold text-[#FF5A36] uppercase tracking-wider mb-1">Chef Narration</p>
+                                <p className="text-stone-200">{item.description || item.title}</p>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800">
+                                <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Culinary Technique & Audio Description</p>
+                                <p className="text-stone-300">
+                                    {item.title}. The chef presents artisanal preparation featuring {item.cuisine_tags.join(', ')}. Audio cues: sizzling pan sear, knife cutting sounds, and reduction simmering at high heat.
+                                </p>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between">
+                                <span className="text-stone-400">Subtitles on Video:</span>
+                                <button
+                                    onClick={() => setShowCC(!showCC)}
+                                    className={`px-3 py-1 rounded-lg text-xs font-bold ${showCC ? 'bg-amber-400 text-stone-950' : 'bg-stone-800 text-white'}`}
+                                >
+                                    {showCC ? 'Subtitles Active' : 'Enable Subtitles'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setShowTranscript(false)}
+                            className="w-full py-2.5 rounded-xl bg-[#FF5A36] text-white font-bold text-xs hover:opacity-90"
+                        >
+                            Close Transcript
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Comments sheet */}
             {comments && <CommentsSheet item={item} onClose={() => setComments(false)} />}

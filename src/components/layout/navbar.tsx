@@ -7,8 +7,9 @@ import { useAuth, dashboardHref } from '@/context/auth-context'
 import {
     Moon, Sun, User, Menu, X, ChefHat, ChevronDown,
     LayoutDashboard, LogIn, UserPlus, LogOut, Loader2,
-    Sparkles, Tv, GraduationCap
+    Sparkles, Tv, GraduationCap, Accessibility
 } from 'lucide-react'
+import { useAccessibility } from '@/context/accessibility-context'
 
 import { WaitlistModal } from '@/components/waitlist/waitlist-modal'
 import { BrandLogo } from '@/components/layout/logo'
@@ -18,6 +19,7 @@ export function Navbar() {
     const router = useRouter()
     const { user, profile, role, signOut, signInWithGoogle, loading } = useAuth()
     const { currency, setCurrencyCode } = useCurrency()
+    const { setIsOpen: setA11yOpen } = useAccessibility()
 
     const dropdownRef = useRef<HTMLDivElement>(null)
     const exploreRef = useRef<HTMLDivElement>(null)
@@ -194,6 +196,16 @@ export function Navbar() {
                             )}
                         </div>
 
+                        {/* Accessibility Options */}
+                        <button
+                            onClick={() => setA11yOpen(true)}
+                            className="w-8 h-8 rounded-full hover:bg-muted transition-colors flex items-center justify-center text-foreground/80 hover:text-terracotta"
+                            aria-label="Accessibility options (Alt + A)"
+                            title="Accessibility options (Alt + A)"
+                        >
+                            <Accessibility className="w-4 h-4" />
+                        </button>
+
                         {/* Dark mode */}
                         <button
                             onClick={toggleTheme}
@@ -333,6 +345,13 @@ export function Navbar() {
                                 <Link href="/kids-zone" onClick={() => setMobileOpen(false)} className="p-3 bg-muted/60 rounded-xl text-xs font-bold text-center block">
                                     🧒 Kids Zone
                                 </Link>
+                                <button
+                                    onClick={() => { setMobileOpen(false); setA11yOpen(true) }}
+                                    className="col-span-2 p-3 bg-stone-800 text-stone-100 rounded-xl text-xs font-bold text-center flex items-center justify-center gap-2 border border-stone-700 hover:bg-stone-700"
+                                >
+                                    <Accessibility className="w-4 h-4 text-terracotta" />
+                                    Accessibility Settings (Alt+A)
+                                </button>
                             </div>
                         </div>
                     </div>
