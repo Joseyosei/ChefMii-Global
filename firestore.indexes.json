@@ -1,135 +1,219 @@
 {
-  "comment": "Composite indexes required by ChefMii Global queries. Firestore rejects a compound query at runtime if its index is missing, so deploy this with `firebase deploy --only firestore:indexes` BEFORE shipping the code that depends on it.",
   "indexes": [
     {
-      "comment": "Public chef directory, ranked by rating.",
       "collectionGroup": "chefs",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "isPublished", "order": "ASCENDING" },
-        { "fieldPath": "avgRating", "order": "DESCENDING" }
+        {
+          "fieldPath": "isPublished",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "avgRating",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
-      "comment": "Chef directory filtered by cuisine.",
       "collectionGroup": "chefs",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "isPublished", "order": "ASCENDING" },
-        { "fieldPath": "cuisines", "arrayConfig": "CONTAINS" },
-        { "fieldPath": "avgRating", "order": "DESCENDING" }
+        {
+          "fieldPath": "isPublished",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "cuisines",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "avgRating",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
-      "comment": "Chef directory filtered by city.",
       "collectionGroup": "chefs",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "isPublished", "order": "ASCENDING" },
-        { "fieldPath": "locationCity", "order": "ASCENDING" },
-        { "fieldPath": "avgRating", "order": "DESCENDING" }
+        {
+          "fieldPath": "isPublished",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "locationCity",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "avgRating",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
-      "comment": "Chef directory sorted by price for the price-ascending sort option.",
       "collectionGroup": "chefs",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "isPublished", "order": "ASCENDING" },
-        { "fieldPath": "hourlyRate", "order": "ASCENDING" }
+        {
+          "fieldPath": "isPublished",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hourlyRate",
+          "order": "ASCENDING"
+        }
       ]
     },
     {
-      "comment": "Admin review queue, oldest submission first so nobody waits longest.",
       "collectionGroup": "chef_applications",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "submittedAt", "order": "ASCENDING" }
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "submittedAt",
+          "order": "ASCENDING"
+        }
       ]
     },
     {
-      "comment": "Escrow release sweep: confirmed bookings whose funds are still held.",
       "collectionGroup": "bookings",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "payout_status", "order": "ASCENDING" },
-        { "fieldPath": "event_date", "order": "ASCENDING" }
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "payout_status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "event_date",
+          "order": "ASCENDING"
+        }
       ]
     },
     {
-      "comment": "A client's own bookings, newest first.",
       "collectionGroup": "bookings",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "client_id", "order": "ASCENDING" },
-        { "fieldPath": "created_at", "order": "DESCENDING" }
+        {
+          "fieldPath": "client_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
-      "comment": "A chef's own bookings, newest first.",
       "collectionGroup": "bookings",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "chef_id", "order": "ASCENDING" },
-        { "fieldPath": "created_at", "order": "DESCENDING" }
+        {
+          "fieldPath": "chef_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
-      "comment": "Payout attempt history for one booking.",
       "collectionGroup": "payouts",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "bookingId", "order": "ASCENDING" },
-        { "fieldPath": "attempt", "order": "DESCENDING" }
+        {
+          "fieldPath": "bookingId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "attempt",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
-      "comment": "A chef's payout history.",
       "collectionGroup": "payouts",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "chefId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
+        {
+          "fieldPath": "chefId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
-      "comment": "Verification documents for one applicant, grouped by stage.",
       "collectionGroup": "chef_documents",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "chefId", "order": "ASCENDING" },
-        { "fieldPath": "stage", "order": "ASCENDING" },
-        { "fieldPath": "uploadedAt", "order": "DESCENDING" }
+        {
+          "fieldPath": "chefId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "stage",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "uploadedAt",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
-      "comment": "Reviews shown on a chef profile, newest first.",
       "collectionGroup": "reviews",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "chef_id", "order": "ASCENDING" },
-        { "fieldPath": "created_at", "order": "DESCENDING" }
+        {
+          "fieldPath": "chef_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
-      "comment": "A user's unread notifications.",
       "collectionGroup": "notifications",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "user_id", "order": "ASCENDING" },
-        { "fieldPath": "is_read", "order": "ASCENDING" },
-        { "fieldPath": "created_at", "order": "DESCENDING" }
+        {
+          "fieldPath": "user_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "is_read",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
-      "comment": "ChefTV feed for one chef.",
       "collectionGroup": "chef_media",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "chef_id", "order": "ASCENDING" },
-        { "fieldPath": "created_at", "order": "DESCENDING" }
+        {
+          "fieldPath": "chef_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
       ]
     }
   ],

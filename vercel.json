@@ -5,7 +5,6 @@
   "installCommand": "npm install",
   "crons": [
     {
-      "comment": "Escrow release sweep: pays chefs for events that have happened. Vercel sends Authorization: Bearer $CRON_SECRET, which the route requires, so CRON_SECRET must be set in project env vars or every run returns 403.",
       "path": "/api/stripe/payout/release",
       "schedule": "0 7 * * *"
     }

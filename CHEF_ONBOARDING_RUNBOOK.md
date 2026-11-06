@@ -237,3 +237,34 @@ taking real money, run one booking end to end in Stripe test mode and confirm:
   edits.
 - **Still hardcoded**: Academy courses, the marketplace catalogue, and the
   farmers and suppliers list. These are the next slices.
+
+---
+
+## 6. Composite index reference
+
+`firestore.indexes.json` holds 14 indexes. The format allows no comments, so
+each one is documented here. Firestore rejects a compound query whose index is
+missing, which is why these must be deployed before the code that uses them.
+
+| Collection | Fields | Query it serves |
+|---|---|---|
+| `chefs` | isPublished asc, avgRating desc | Public chef directory, ranked by rating. |
+| `chefs` | isPublished asc, cuisines, avgRating desc | Chef directory filtered by cuisine. |
+| `chefs` | isPublished asc, locationCity asc, avgRating desc | Chef directory filtered by city. |
+| `chefs` | isPublished asc, hourlyRate asc | Chef directory sorted by price for the price-ascending sort option. |
+| `chef_applications` | status asc, submittedAt asc | Admin review queue, oldest submission first so nobody waits longest. |
+| `bookings` | status asc, payout_status asc, event_date asc | Escrow release sweep: confirmed bookings whose funds are still held. |
+| `bookings` | client_id asc, created_at desc | A client's own bookings, newest first. |
+| `bookings` | chef_id asc, created_at desc | A chef's own bookings, newest first. |
+| `payouts` | bookingId asc, attempt desc | Payout attempt history for one booking. |
+| `payouts` | chefId asc, createdAt desc | A chef's payout history. |
+| `chef_documents` | chefId asc, stage asc, uploadedAt desc | Verification documents for one applicant, grouped by stage. |
+| `reviews` | chef_id asc, created_at desc | Reviews shown on a chef profile, newest first. |
+| `notifications` | user_id asc, is_read asc, created_at desc | A user's unread notifications. |
+| `chef_media` | chef_id asc, created_at desc | ChefTV feed for one chef. |
+
+Note: `vercel.json`, `firestore.indexes.json` and `firebase.emulator.json`
+cannot carry `comment` keys. Vercel rejects unknown properties inside a cron
+entry with `INVALID_VERCEL_CONFIG` and fails the build, which is exactly how
+this was caught — `next build` does not validate `vercel.json`, only Vercel
+does.
