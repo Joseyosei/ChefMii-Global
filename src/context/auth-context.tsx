@@ -46,7 +46,6 @@ interface AuthContextType {
     role: UserRole | null
     signIn: (email: string, password: string) => Promise<{ error: string | null }>
     signInWithGoogle: () => Promise<{ error: string | null }>
-    signInAsDemo: (demoRole?: UserRole) => Promise<{ error: string | null }>
     signUp: (email: string, password: string, fullName: string, role: UserRole) => Promise<{ error: string | null }>
     signOut: () => Promise<void>
     refreshProfile: () => Promise<void>
@@ -275,53 +274,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-    const signInAsDemo = async (demoRole: UserRole = 'client'): Promise<{ error: string | null }> => {
-        const demoProfiles: Record<string, Profile> = {
-            client: {
-                id: 'demo-client-user',
-                email: 'client@chefmii.com',
-                full_name: 'Joshua Osei-Bonsu',
-                avatar_url: null,
-                role: 'client',
-                phone: '+44 7123 456789',
-            },
-            chef: {
-                id: 'marco-rossi',
-                email: 'chef.marco@chefmii.com',
-                full_name: 'Chef Marco Rossi',
-                avatar_url: '/images/chefs/chef_marco_rossi.png',
-                role: 'chef',
-                phone: '+44 7987 654321',
-            },
-            business: {
-                id: 'demo-business-user',
-                email: 'events@apex.com',
-                full_name: 'Apex Enterprises',
-                avatar_url: null,
-                role: 'business',
-                phone: '+44 207 123 4567',
-            },
-            influencer: {
-                id: 'demo-influencer-user',
-                email: 'creator@chefmii.com',
-                full_name: 'TasteLondon Creator',
-                avatar_url: null,
-                role: 'influencer',
-                phone: null,
-            },
-        }
-
-        const chosenProfile = demoProfiles[demoRole] || demoProfiles.client
-        setLocalAuthSession(chosenProfile)
-
-        try {
-            await setDoc(doc(db, 'users', chosenProfile.id), chosenProfile, { merge: true })
-        } catch {
-            // non-fatal
-        }
-        return { error: null }
-    }
-
     const signUp = async (
         email: string,
         password: string,
@@ -423,7 +375,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             role: profile?.role ?? null,
             signIn,
             signInWithGoogle,
-            signInAsDemo,
             signUp,
             signOut,
             refreshProfile,

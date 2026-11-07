@@ -9,7 +9,8 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test:rules": "npx --yes firebase-tools emulators:exec --only firestore --project demo-chefmii --config firebase.emulator.json \"node tests/firestore-rules.test.mjs\"",
-    "seed:chefs": "npx --yes tsx scripts/seed-chefs.ts"
+    "seed:chefs": "npx --yes tsx scripts/seed-chefs.ts",
+    "seed:demo-accounts": "npx --yes tsx scripts/seed-demo-accounts.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
