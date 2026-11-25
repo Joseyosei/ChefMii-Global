@@ -14,8 +14,6 @@ import {
     doc,
     updateDoc,
     increment,
-    setDoc,
-    deleteDoc,
     serverTimestamp,
 } from 'firebase/firestore'
 import { useAuth } from '@/context/auth-context'
@@ -25,6 +23,13 @@ import {
     Send, Loader2, Upload, CheckCircle, Sparkles,
 } from 'lucide-react'
 import { BrandLogo } from '@/components/layout/logo'
+import { uploadChefMediaVideo, MediaUploadError } from '@/lib/chefs/media-upload-client'
+import {
+    toggleLike,
+    toggleFollow,
+    loadLikedMediaIds,
+    loadFollowedChefIds,
+} from '@/lib/chefs/engagement-client'
 
 /* ── Types ───────────────────────────────────────────────────── */
 interface MediaItem {
@@ -43,6 +48,8 @@ interface MediaItem {
     chef?: { full_name: string | null; avatar_url: string | null }
     isLiked?: boolean
     isSaved?: boolean
+    isFollowed?: boolean
+    chef_slug?: string
     score?: number
 }
 
@@ -355,6 +362,8 @@ function UploadModal({ onClose, onUploaded }: { onClose: () => void; onUploaded?
     const [tagInput, setTagInput] = useState('')
     const [step, setStep] = useState<1 | 2 | 3>(1)
     const [uploading, setUploading] = useState(false)
+    const [progress, setProgress] = useState(0)
+    const [error, setError] = useState<string | null>(null)
     const fileRef = useRef<HTMLInputElement>(null)
 
     const addTag = () => {
@@ -364,52 +373,85 @@ function UploadModal({ onClose, onUploaded }: { onClose: () => void; onUploaded?
     }
 
     const upload = async () => {
-        if (!file && !title) return
+        // A real video file is now required. The old flow let you publish with
+        // just a title and wrote a hardcoded w3schools sample as the video, or
+        // a blob: URL that only worked in the uploader's own tab.
+        if (!file) {
+            setError('Choose a video file to publish.')
+            return
+        }
+        if (!title.trim()) {
+            setError('Give your video a title.')
+            return
+        }
+
         setUploading(true)
+        setError(null)
+        setProgress(0)
+
         try {
-            const previewUrl = file ? URL.createObjectURL(file) : 'https://www.w3schools.com/html/mov_bbb.mp4'
-            const authorName = profile?.full_name || user?.displayName || 'Chef Marco Rossi'
+            // Uploads the actual file to Cloud Storage and returns a durable
+            // public URL plus a captured poster frame.
+            const { videoUrl, thumbnailUrl, durationSeconds } = await uploadChefMediaVideo({
+                file,
+                onProgress: setProgress,
+            })
+
+            const authorName = profile?.full_name || user?.displayName || 'ChefMii Creator'
             const authorAvatar = profile?.avatar_url || null
+            const chefId = user?.id || user?.uid
+
+            if (!chefId) {
+                throw new MediaUploadError('Please sign in again before publishing.')
+            }
+
+            // Written with the client SDK; firestore.rules requires
+            // chef_id === the authenticated uid on create, so this is only ever
+            // the uploader's own video.
+            const docRef = await addDoc(collection(db, 'chef_media'), {
+                chef_id: chefId,
+                video_url: videoUrl,
+                thumbnail_url: thumbnailUrl,
+                duration_seconds: durationSeconds,
+                title: title.trim(),
+                description: desc.trim() || null,
+                cuisine_tags: tags.length > 0 ? tags : ['gourmet', 'chef'],
+                views: 0,
+                likes: 0,
+                comments_count: 0,
+                bookings_generated: 0,
+                createdAt: serverTimestamp(),
+            })
 
             const newItem: MediaItem = {
-                id: `upload-${Date.now()}`,
-                chef_id: user?.id || 'marco-rossi',
-                video_url: previewUrl,
-                thumbnail_url: previewUrl,
-                title: title || 'Culinary Creation 🍳',
-                description: desc || 'Freshly plated and cooked live on ChefMii!',
+                id: docRef.id,
+                chef_id: chefId,
+                video_url: videoUrl,
+                thumbnail_url: thumbnailUrl,
+                title: title.trim(),
+                description: desc.trim() || null,
                 cuisine_tags: tags.length > 0 ? tags : ['gourmet', 'chef'],
-                likes: 1,
-                views: 1,
+                likes: 0,
+                views: 0,
                 bookings_generated: 0,
                 comments_count: 0,
                 created_at: new Date().toISOString(),
                 chef: { full_name: authorName, avatar_url: authorAvatar },
             }
 
-            try {
-                await addDoc(collection(db, 'chef_media'), {
-                    chef_id: newItem.chef_id,
-                    video_url: newItem.video_url,
-                    thumbnail_url: newItem.thumbnail_url,
-                    title: newItem.title,
-                    description: newItem.description,
-                    cuisine_tags: newItem.cuisine_tags,
-                    views: 0,
-                    likes: 0,
-                    createdAt: serverTimestamp(),
-                })
-            } catch (err) {
-                console.warn('Firestore write offline fallback:', err)
-            }
-
             onUploaded?.(newItem)
             setUploading(false)
             setStep(3)
         } catch (e) {
+            // Unlike before, a failure is shown as a failure. The old handler
+            // advanced to the success screen even when the upload threw.
             console.error('Upload failed:', e)
+            setError(
+                e instanceof MediaUploadError
+                    ? e.message
+                    : 'Upload failed. Check your connection and try again.',
+            )
             setUploading(false)
-            setStep(3)
         }
     }
 
@@ -428,11 +470,11 @@ function UploadModal({ onClose, onUploaded }: { onClose: () => void; onUploaded?
                                 onClick={() => fileRef.current?.click()}
                                 className="border-2 border-dashed border-border hover:border-terracotta rounded-2xl p-10 text-center cursor-pointer transition-colors group bg-muted/20"
                             >
-                                <input ref={fileRef} type="file" accept="video/*" className="hidden"
-                                    onChange={e => { if (e.target.files?.[0]) { setFile(e.target.files[0]); setTitle(e.target.files[0].name.replace(/\.[^/.]+$/, '')); setStep(2); } }} />
+                                <input ref={fileRef} type="file" accept="video/mp4,video/quicktime,video/webm" className="hidden"
+                                    onChange={e => { if (e.target.files?.[0]) { setError(null); setFile(e.target.files[0]); setTitle(e.target.files[0].name.replace(/\.[^/.]+$/, '')); setStep(2); } }} />
                                 <Upload className="w-10 h-10 text-muted-foreground group-hover:text-terracotta mx-auto mb-3 transition-colors" />
                                 <p className="font-bold text-sm text-foreground">Tap to select video file</p>
-                                <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM up to 500MB</p>
+                                <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM up to 200MB</p>
                             </div>
                         </>
                     )}
@@ -487,7 +529,25 @@ function UploadModal({ onClose, onUploaded }: { onClose: () => void; onUploaded?
                                 </div>
                             </div>
 
-                            <button onClick={upload} disabled={uploading || !title.trim()}
+                            {uploading && (
+                                <div className="space-y-1.5">
+                                    <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                                        <div
+                                            className="h-full gradient-brand transition-all duration-300"
+                                            style={{ width: `${progress}%` }}
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-muted-foreground text-center tabular-nums">
+                                        {progress < 100 ? `Uploading ${progress}%` : 'Finishing up…'}
+                                    </p>
+                                </div>
+                            )}
+
+                            {error && (
+                                <p role="alert" className="text-xs text-destructive text-center">{error}</p>
+                            )}
+
+                            <button onClick={upload} disabled={uploading || !file || !title.trim()}
                                 className="w-full py-3.5 min-h-[50px] gradient-brand text-white font-bold rounded-xl hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 shadow-md text-xs">
                                 {uploading ? <><Loader2 className="w-4 h-4 animate-spin" /> Publishing to ChefTV…</> : 'Publish to ChefTV Feed →'}
                             </button>
@@ -524,7 +584,7 @@ function VideoCard({
     const [liked, setLiked] = useState(item.isLiked ?? false)
     const [likes, setLikes] = useState(item.likes)
     const [saved, setSaved] = useState(item.isSaved ?? false)
-    const [followed, setFollowed] = useState(false)
+    const [followed, setFollowed] = useState(item.isFollowed ?? false)
     const [toastMessage, setToastMessage] = useState<string | null>(null)
     const [playing, setPlaying] = useState(false)
     const [showHeart, setShowHeart] = useState(false)
@@ -583,36 +643,39 @@ function VideoCard({
     }
 
     const handleLike = async () => {
-        if (liked) {
-            setLiked(false); setLikes(l => l - 1)
-            showToast('Removed from liked videos')
-            if (user) {
-                try {
-                    await deleteDoc(doc(db, 'users', user.id, 'likes', item.id))
-                } catch {}
-            }
-        } else {
-            setLiked(true); setLikes(l => l + 1)
-            showToast('Added to liked videos ❤️')
-            if (user) {
-                try {
-                    await setDoc(doc(db, 'users', user.id, 'likes', item.id), {
-                        media_id: item.id,
-                        createdAt: serverTimestamp(),
-                    }, { merge: true })
-                } catch {}
-            }
+        if (!user) { showToast('Sign in to like videos'); return }
+
+        // Optimistic: flip immediately, revert if the write fails. The count
+        // now changes in the database too, via a transaction, so the number is
+        // real rather than local-only.
+        const wasLiked = liked
+        setLiked(!wasLiked); setLikes(l => l + (wasLiked ? -1 : 1))
+        showToast(wasLiked ? 'Removed from liked videos' : 'Added to liked videos ❤️')
+        try {
+            await toggleLike(item.id)
+        } catch {
+            setLiked(wasLiked); setLikes(l => l + (wasLiked ? 1 : -1))
+            showToast('Could not save that like. Try again.')
         }
     }
 
-    const handleFollow = (e: React.MouseEvent) => {
+    const handleFollow = async (e: React.MouseEvent) => {
         e.stopPropagation()
-        if (followed) {
-            setFollowed(false)
-            showToast(`Unfollowed ${item.chef?.full_name || 'Chef'}`)
-        } else {
-            setFollowed(true)
-            showToast(`Following ${item.chef?.full_name || 'Chef'}! ⭐`)
+        if (!user) { showToast('Sign in to follow chefs'); return }
+        if (!item.chef_id) return
+
+        const wasFollowed = followed
+        setFollowed(!wasFollowed)
+        showToast(
+            wasFollowed
+                ? `Unfollowed ${item.chef?.full_name || 'Chef'}`
+                : `Following ${item.chef?.full_name || 'Chef'}! ⭐`,
+        )
+        try {
+            await toggleFollow(item.chef_id)
+        } catch (err) {
+            setFollowed(wasFollowed)
+            showToast(err instanceof Error ? err.message : 'Could not update follow. Try again.')
         }
     }
 
@@ -767,9 +830,12 @@ function VideoCard({
                         <span key={tag} className="text-white/70 text-xs font-semibold">#{tag}</span>
                     ))}
                 </div>
-                {/* Book CTA */}
+                {/* Book CTA — the conversion edge over TikTok: every reel routes
+                    straight to this chef's booking page. Prefer the directory
+                    slug; real uploads key chef_id to a uid, which /book also
+                    resolves, but the slug gives a cleaner URL. */}
                 <Link
-                    href={`/book/${item.chef_id}`}
+                    href={`/book/${item.chef_slug || item.chef_id}`}
                     onClick={e => e.stopPropagation()}
                     className="inline-flex items-center gap-2 px-5 py-2.5 gradient-brand text-white font-bold rounded-2xl text-sm hover:opacity-90 shadow-lg"
                 >
@@ -803,18 +869,30 @@ export default function ChefMediaPage() {
     useEffect(() => {
         const load = async () => {
             try {
-                const mediaQuery = query(
-                    collection(db, 'chef_media'),
-                    orderBy('createdAt', 'desc'),
-                    limit(20)
-                )
-                const snap = await getDocs(mediaQuery)
+                // Load the feed and the viewer's like/follow sets together, so
+                // the heart and Follow button reflect real saved state on first
+                // paint instead of always starting empty.
+                const [snap, likedIds, followedIds] = await Promise.all([
+                    getDocs(
+                        query(collection(db, 'chef_media'), orderBy('createdAt', 'desc'), limit(20)),
+                    ),
+                    loadLikedMediaIds(),
+                    loadFollowedChefIds(),
+                ])
+
+                const hydrate = (it: MediaItem): MediaItem => ({
+                    ...it,
+                    isLiked: likedIds.has(it.id),
+                    isFollowed: it.chef_id ? followedIds.has(it.chef_id) : false,
+                })
+
                 if (!snap.empty) {
                     const items: MediaItem[] = snap.docs.map(docSnap => {
                         const d = docSnap.data()
                         return {
                             id: docSnap.id,
                             chef_id: d.chef_id || 'marco-rossi',
+                            chef_slug: d.chef_slug || d.chef_id || undefined,
                             video_url: d.video_url || '',
                             thumbnail_url: d.thumbnail_url || null,
                             title: d.title || 'Chef Special',
@@ -828,9 +906,17 @@ export default function ChefMediaPage() {
                             chef: { full_name: 'ChefMii Creator', avatar_url: null },
                         }
                     })
-                    setFeed(prev => scoreItems([...items, ...SEED.filter(s => !items.some(it => it.id === s.id))]))
+                    setFeed(
+                        scoreItems(
+                            [...items, ...SEED.filter(s => !items.some(it => it.id === s.id))].map(hydrate),
+                        ),
+                    )
+                } else {
+                    // No live media yet: still hydrate the seed feed's state.
+                    setFeed(prev => prev.map(hydrate))
                 }
             } catch {
+                // Leave the seed feed in place on error.
             } finally {
                 setLoading(false)
             }
@@ -858,13 +944,34 @@ export default function ChefMediaPage() {
         return () => observer.disconnect()
     }, [feed])
 
+    // Tabs now actually filter the feed. Before this they were decorative:
+    // the `tab` value was tracked but every tab showed the identical list.
+    const tabFeed = (() => {
+        switch (tab) {
+            case 'Following':
+                return feed.filter(i => i.isFollowed)
+            case 'Trending':
+                // Most-watched first; scoreItems already blends recency + likes.
+                return [...feed].sort((a, b) => b.views - a.views)
+            case 'Near Me':
+                // Placeholder until geo is captured on upload: surface the
+                // viewer's own city once available. For now, recency.
+                return [...feed].sort(
+                    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+                )
+            case 'For You':
+            default:
+                return feed
+        }
+    })()
+
     const displayFeed = searchQ.trim()
-        ? feed.filter(i =>
+        ? tabFeed.filter(i =>
             i.title.toLowerCase().includes(searchQ.toLowerCase()) ||
             i.cuisine_tags.some(t => t.includes(searchQ.toLowerCase())) ||
             (i.chef?.full_name ?? '').toLowerCase().includes(searchQ.toLowerCase())
         )
-        : feed
+        : tabFeed
 
     return (
         <div className="fixed inset-0 bg-black overflow-hidden flex flex-col">
